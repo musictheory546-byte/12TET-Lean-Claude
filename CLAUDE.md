@@ -14,3 +14,11 @@
 
 # Restrictions
 * You will work only on files in the directory Music.
+
+# Permissions
+## Command Line Applications
+### Grep
+* you can run any `grep` command on directories under `/Users/lean`
+
+### Find
+* you can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`
