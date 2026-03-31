@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Algebra.Ring.Defs        -- eq_neg_of_add_eq_zero_left
+import Mathlib.Data.Finset.Basic        -- Finset (inv_closed)
+import Mathlib.Data.ZMod.Defs          -- ZMod
+import Mathlib.Tactic.LinearCombination -- linear_combination
 
 abbrev HarmonicInterval (m : ℕ) := ZMod m
 

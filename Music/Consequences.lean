@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Card -- Finset.card_pair
 import Music.Basic
 import Music.Axioms
 

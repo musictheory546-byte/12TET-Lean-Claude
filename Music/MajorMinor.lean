@@ -1,3 +1,7 @@
+import Mathlib.Data.Finset.Basic   -- Finset operations, Finset.mem_filter
+import Mathlib.Data.Fintype.Basic  -- Finset.univ
+import Mathlib.Tactic.FinCases     -- fin_cases
+import Mathlib.Tactic.PushNeg      -- push Not
 import Music.Basic
 import Music.Axioms
 import Music.TwelveTET

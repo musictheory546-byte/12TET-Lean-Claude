@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Group.Units.Defs -- IsUnit
 import Music.Basic
 
 variable {m : ℕ}

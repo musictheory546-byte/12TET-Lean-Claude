@@ -1,3 +1,13 @@
+import Mathlib.Algebra.CharP.Defs         -- CharP.cast_eq_zero_iff
+import Mathlib.Algebra.Group.Defs         -- two_nsmul
+import Mathlib.Data.Nat.Prime.Defs        -- Nat.Prime
+import Mathlib.Data.ZMod.Basic            -- CharP instance for ZMod, ZMod.card
+import Mathlib.GroupTheory.OrderOfElement  -- addOrderOf_eq_prime, addOrderOf_dvd_natCard
+import Mathlib.Logic.Basic                -- Fact
+import Mathlib.SetTheory.Cardinal.Finite  -- Nat.card_eq_fintype_card
+import Mathlib.Tactic.IntervalCases       -- interval_cases
+import Mathlib.Tactic.NormNum            -- norm_num
+import Mathlib.Tactic.Ring               -- ring
 import Music.Basic
 import Music.Axioms
 import Music.Consequences
@@ -73,7 +83,7 @@ private lemma m_even [NeZero m]
   have h2t : t + t = 0 := ht.2
   have ht0 : t ≠ 0   := ht.1
   have hord : addOrderOf t = 2 := by
-    haveI : Fact (Nat.Prime 2) := ⟨by norm_num⟩
+    haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
     apply addOrderOf_eq_prime
     · rw [two_nsmul]; exact h2t
     · exact ht0

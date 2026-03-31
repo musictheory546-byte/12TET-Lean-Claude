@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Basic -- Finset.mem_univ, Finset.mem_union, Finset.mem_sdiff
 import Music.Basic
 import Music.Axioms
 import Music.MajorMinor
