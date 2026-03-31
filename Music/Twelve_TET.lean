@@ -215,7 +215,7 @@ lemma m_ne_six [NeZero m]
     clear hp p; revert t
     simp only [isSelfInverse]; decide
   have hp4 : p = 4 := by rw [perfect_above_tritone p t hp ht, ht3]; decide
-  exact absurd (five_above_perfect p hp) (by simp [hp4]; decide)
+  exact absurd (five_above_perfect p hp) (by simp only [hp4]; decide)
 
 /-- m ≠ 4: major/minor intervals cannot exist in ZMod 4. -/
 lemma m_ne_four [NeZero m]
@@ -227,7 +227,7 @@ lemma m_ne_four [NeZero m]
     clear hp p; revert t
     simp only [isSelfInverse]; decide
   have hp3 : p = 3 := by rw [perfect_above_tritone p t hp ht, ht2]; decide
-  have hpi : p⁻¹ = 1 := by simp [HI_inv_eq_neg, hp3]; decide
+  have hpi : p⁻¹ = 1 := by simp only [HI_inv_eq_neg, hp3]; decide
   fin_cases i <;> simp only at *
   · exact hine rfl
   · exact hiP (by have := perfect_inv_closed p hp; rwa [hpi] at this)
@@ -378,7 +378,7 @@ theorem prefixed_contains_complement [NeZero m]
   have hp7 : p = 7 := by
     have := perfect_above_tritone p t hp ht; rw [ht6] at this; simpa using this
   have hpi5 : p⁻¹ = 5 := by
-    simp [HI_inv_eq_neg, hp7]; decide
+    simp only [HI_inv_eq_neg, hp7]; decide
   -- Rewrite everything concretely
   subst ht6; subst hp7
   -- Note: hpi5 now says (7 : ZMod 12)⁻¹ = 5
