@@ -441,7 +441,7 @@ theorem prefixed_contains_complement [NeZero m]
   intro i hi
   simp only [selfInverseSet, Finset.mem_sdiff, Finset.mem_univ, true_and,
              Finset.mem_insert, Finset.mem_singleton] at hi
-  push_neg at hi
+  push Not at hi
   obtain ⟨hi0, hi6⟩ := hi
   fin_cases i
   · exact absurd rfl hi0
