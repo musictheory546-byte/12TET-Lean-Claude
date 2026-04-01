@@ -87,6 +87,7 @@ private theorem complement_SI_is_fixedPoint [NeZero m]
   constructor
   · rintro ⟨_, hni⟩; exact hni
   · intro hni
+    -- i ∈ univ \ selfInverseSet t, so i ∈ s (the first component of the union)
     exact ⟨Or.inl (Or.inl hni), hni⟩
 
 /-- The lfp is contained in the complement of the self-inverse set. -/
@@ -136,6 +137,7 @@ private theorem prefixed_contains_complement [NeZero m]
   have hpi5 : p⁻¹ = 5 := by
     simp only [HI_inv_eq_neg, hp7]; decide
   subst ht6; subst hp7
+  -- {7, 5} = {p, p⁻¹};  {0, 6} = selfInverseSet t
   have step : ∀ j : ZMod 12,
       j ∈ s ∪ ({7, (5 : ZMod 12)} : Finset (ZMod 12)) →
       ∀ i : ZMod 12, (i = j + 1 ∨ i = j - 1) → i ∉ ({0, (6 : ZMod 12)} : Finset _) → i ∈ s := by
@@ -145,8 +147,8 @@ private theorem prefixed_contains_complement [NeZero m]
                Finset.mem_image, hpi5]
     refine ⟨?_, hni⟩
     rcases hi with rfl | rfl
-    · exact Or.inl (Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩)
-    · exact Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩
+    · exact Or.inl (Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩)  -- i = j+1: frontier.image(·+1)
+    · exact Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩            -- i = j-1: frontier.image(·-1)
   have fp7 : (7 : ZMod 12) ∈ s ∪ ({7, (5:ZMod 12)} : Finset _) := by simp
   have fp5 : (5 : ZMod 12) ∈ s ∪ ({7, (5:ZMod 12)} : Finset _) := by simp
   have h1 : (8 : ZMod 12) ∈ s :=

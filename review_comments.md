@@ -47,47 +47,16 @@ Resolved. Replaced `linear_combination h` with `nth_rw 1 [h]; exact neg_add_canc
 Resolved.
 
 2.3 m_even — the chain through Nat.card (TwelveTET.lean:86–88)
-
-```lean
-have h : addOrderOf t ∣ Nat.card (ZMod m) := addOrderOf_dvd_natCard t
-rwa [Nat.card_eq_fintype_card, ZMod.card] at h
-```
-Three Mathlib facts are chained to establish `addOrderOf t ∣ m`. The prose reading — "the additive order of an element divides the group order, and `ZMod m` has order `m`" — is clear, but the rewrite chain does not say which lemma does which. A comment `-- group order = m` on the `rwa` line would help.
+Resolved. Added `-- group order of ZMod m is m` on the `rwa` line.
 
 2.4 m_ne_four — fin_cases cases are unlabelled (TwelveTET.lean:124–128)
-
-```lean
-fin_cases i <;> simp only at *
-· exact hine rfl
-· exact hiP (by have := perfect_inv_closed p hp; rwa [hpi] at this)
-· exact hiSI (by simp only [isSelfInverse]; decide)
-· exact hiP (by rwa [hp3] at hp)
-```
-`fin_cases i` in `ZMod 4` produces `i = 0, 1, 2, 3`. The correspondence to musical roles (0 = unison, 1 = p⁻¹, 2 = t, 3 = p) is implicit. A `-- i = 0: unison` comment per case would make the case analysis self-documenting.
+Resolved. Added `-- i = 0: unison`, `-- i = 1 = p⁻¹`, `-- i = 2 = t`, `-- i = 3 = p` per case.
 
 2.5 complement_SI_is_fixedPoint — backward step (MajorMinor.lean:89–90)
-
-```lean
-· intro hni
-  exact ⟨Or.inl (Or.inl hni), hni⟩
-```
-`Or.inl (Or.inl hni)` places `i` in the `s` (i.e., `univ \ selfInverseSet t`) component of the three-way union `s ∪ frontier.image(·+1) ∪ frontier.image(·-1)`. The justification — `i ∈ s` because `hni : i ∉ selfInverseSet t` and `i ∈ univ` — is not stated. A one-line comment before the `exact` would suffice.
+Resolved. Added comment `-- i ∈ univ \ selfInverseSet t, so i ∈ s (the first component of the union)`.
 
 2.6 prefixed_contains_complement — concrete literals in step helper (MajorMinor.lean:139–149)
-
-```lean
-have step : ∀ j : ZMod 12,
-    j ∈ s ∪ ({7, (5 : ZMod 12)} : Finset (ZMod 12)) →
-    ∀ i : ZMod 12, (i = j + 1 ∨ i = j - 1) → i ∉ ({0, (6 : ZMod 12)} : Finset _) → i ∈ s
-```
-After `subst ht6; subst hp7` the names `p` and `t` are gone; `{7, 5}` and `{0, 6}` are their values without annotation. A comment `-- {7,5} = {p,p⁻¹}, {0,6} = selfInverseSet t` at the `have step` line removes the need to look back.
-
-The proof of `step` closes each branch with:
-```lean
-· exact Or.inl (Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩)
-· exact Or.inr ⟨j, Finset.mem_union.mp hj, rfl⟩
-```
-`Or.inl (Or.inr ...)` targets `frontier.image(·+1)`; `Or.inr ...` targets `frontier.image(·-1)`. This matches `stepMM`'s union structure but is not stated.
+Resolved. Added `-- {7, 5} = {p, p⁻¹};  {0, 6} = selfInverseSet t` before the `have step` definition, and inline comments on both `Or.inl`/`Or.inr` branches naming which component of `stepMM` they target.
 
 2.7 interval_partition — cascading by_cases with left/right (Partition.lean:20–23)
 Resolved. Replaced `left; left; left` etc. with explicit `Or.inl (Or.inl (Or.inl h0))` etc. after the existing `simp only` has already unfolded union membership. The `Or.inl`/`Or.inr` form names the disjunct being proved rather than navigating by count.

@@ -84,7 +84,7 @@ private lemma m_even [NeZero m]
     · exact ht.ne_zero
   have hdvd : addOrderOf t ∣ m := by
     have h : addOrderOf t ∣ Nat.card (ZMod m) := addOrderOf_dvd_natCard t
-    rwa [Nat.card_eq_fintype_card, ZMod.card] at h
+    rwa [Nat.card_eq_fintype_card, ZMod.card] at h  -- group order of ZMod m is m
   exact hord ▸ hdvd
 
 /-- m ≠ 2: p = t+1 = 0 in ZMod 2, contradicting A4. -/
@@ -121,10 +121,10 @@ private lemma m_ne_four [NeZero m]
   have hp3 : p = 3 := by rw [perfect_above_tritone p t hp ht, ht2]; decide
   have hpi : p⁻¹ = 1 := by simp only [HI_inv_eq_neg, hp3]; decide
   fin_cases i <;> simp only at *
-  · exact hine rfl
-  · exact hiP (by have := perfect_inv_closed p hp; rwa [hpi] at this)
-  · exact hiSI (by simp only [isSelfInverse]; decide)
-  · exact hiP (by rwa [hp3] at hp)
+  · exact hine rfl                                               -- i = 0: unison
+  · exact hiP (by have := perfect_inv_closed p hp; rwa [hpi] at this)  -- i = 1 = p⁻¹
+  · exact hiSI (by simp only [isSelfInverse]; decide)           -- i = 2 = t
+  · exact hiP (by rwa [hp3] at hp)                              -- i = 3 = p
 
 /-- **The 12TET theorem**: m = 12. -/
 theorem twelve_TET [NeZero m]
