@@ -17,10 +17,10 @@ theorem interval_partition [NeZero m]
   ext i
   simp only [Finset.mem_univ, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton,
              Finset.mem_sdiff, true_iff]
-  by_cases h0  : i = 0;    · left; left; left;  exact h0
-  by_cases ht' : i = t;    · left; left; right; exact ht'
-  by_cases hp' : i = p;    · left; right; left; exact hp'
-  by_cases hpi : i = p⁻¹; · left; right; right; exact hpi
+  by_cases h0  : i = 0;    · exact Or.inl (Or.inl (Or.inl h0))
+  by_cases ht' : i = t;    · exact Or.inl (Or.inl (Or.inr ht'))
+  by_cases hp' : i = p;    · exact Or.inl (Or.inr (Or.inl hp'))
+  by_cases hpi : i = p⁻¹; · exact Or.inl (Or.inr (Or.inr hpi))
   · right
     refine ⟨⟨trivial, ?_⟩, ?_⟩
     · simp only [selfInverseSet, Finset.mem_insert, Finset.mem_singleton, not_or]

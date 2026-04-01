@@ -111,11 +111,4 @@ The proof of `step` closes each branch with:
 `Or.inl (Or.inr ...)` targets `frontier.image(·+1)`; `Or.inr ...` targets `frontier.image(·-1)`. This matches `stepMM`'s union structure but is not stated.
 
 2.7 interval_partition — cascading by_cases with left/right (Partition.lean:20–23)
-
-```lean
-by_cases h0  : i = 0;    · left; left; left;  exact h0
-by_cases ht' : i = t;    · left; left; right; exact ht'
-by_cases hp' : i = p;    · left; right; left; exact hp'
-by_cases hpi : i = p⁻¹; · left; right; right; exact hpi
-```
-The `left`/`right` navigation encodes the left-associated union `(selfInverseSet t) ∪ {p, p⁻¹} ∪ majorMinorIntervals p t`. The depth-three path is fragile: any reordering of the union breaks the proof silently. Using explicit `Finset.mem_union` rewrites, or `simp only [Finset.mem_union, ...]` to unfold membership before dispatching, would be more robust.
+Resolved. Replaced `left; left; left` etc. with explicit `Or.inl (Or.inl (Or.inl h0))` etc. after the existing `simp only` has already unfolded union membership. The `Or.inl`/`Or.inr` form names the disjunct being proved rather than navigating by count.
