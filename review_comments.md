@@ -12,15 +12,8 @@ Resolved. Added `tritone_eq` to `Consequences.lean`. The four call sites in `Twe
 `MajorMinor.lean` now read `tritone_eq t ht c (by decide) (by decide)`.
 
 ## 3. Replace A5 + A5' with a single biconditional
-
-A5 and A5' together say exactly `isPerfect q ↔ q = p ∨ q = p⁻¹`. Since `isPerfect` is opaque,
-both directions must be asserted, but they could be a single axiom:
-```lean
-axiom perfect_iff [NeZero m] (p : HarmonicInterval m) (hp : isPerfect p)
-    (q : HarmonicInterval m) : isPerfect q ↔ q = p ∨ q = p⁻¹
-```
-This makes the intended meaning — the perfect class is exactly the pair — explicit in one
-statement. A5 and A5' become `(perfect_iff p hp q).mp` and `(perfect_iff p hp q).mpr`.
+Resolved. `perfect_unique` and `perfect_inv_closed` are now theorems derived from the single
+axiom `perfect_iff`.
 
 ## 4. `interval_partition` could use `fin_cases` after fixing m = 12
 

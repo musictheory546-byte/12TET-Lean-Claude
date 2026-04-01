@@ -25,3 +25,6 @@
 
 ### Find
 * you can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`
+
+# Hygene
+* if asked to action an item in list in a file, always update the file aftwards to reflect the changes made
