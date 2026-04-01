@@ -71,10 +71,8 @@ private lemma twelve_eq_zero [NeZero m]
 /-- m ∣ 12. -/
 private lemma m_dvd_twelve [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
-    m ∣ 12 := by
-  have h : (12 : ZMod m) = 0 := twelve_eq_zero p t hp ht
-  have h12 : ((12 : ℕ) : ZMod m) = 0 := by exact_mod_cast h
-  exact (CharP.cast_eq_zero_iff (ZMod m) m 12).mp h12
+    m ∣ 12 :=
+  (CharP.cast_eq_zero_iff (ZMod m) m 12).mp (twelve_eq_zero p t hp ht)
 
 /-- m is even: (2 : ZMod m) = 0 because 2t = 0 and t generates a copy of ZMod 2. -/
 private lemma m_even [NeZero m]
