@@ -20,3 +20,5 @@ Currently `Partition.lean` does not import `TwelveTET` and proves the partition 
 the `by_cases` cascade handles membership. If the theorem were stated with the 12TET hypothesis
 (or in a section where `m = 12`), `fin_cases i` would close all cases computationally, making the
 proof structure consistent with the rest of the development.
+
+However, I, the author, prefer it this way, so 4 is rejected.
