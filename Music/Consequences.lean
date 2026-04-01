@@ -5,7 +5,7 @@ import Music.Axioms
 variable {m : ℕ}
 
 theorem selfInverse_eq_zero_or_tritone [NeZero m]
-    (t i : HarmonicInterval m) (ht : t ≠ 0 ∧ isSelfInverse t) (hi : isSelfInverse i) :
+    (t i : HarmonicInterval m) (ht : IsTritone t) (hi : isSelfInverse i) :
     i = 0 ∨ i = t := by
   by_cases h : i = 0
   · exact Or.inl h

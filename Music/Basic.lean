@@ -35,6 +35,11 @@ theorem selfInverse_iff_inv_eq [NeZero m] (i : HarmonicInterval m) :
     isSelfInverse i ↔ i⁻¹ = i := by
   rw [HI_inv_eq_neg, selfInverse_iff_eq_neg]; exact ⟨(·.symm), (·.symm)⟩
 
+/-- The tritone: a non-zero self-inverse interval. -/
+public structure IsTritone [NeZero m] (t : HarmonicInterval m) : Prop where
+  ne_zero     : t ≠ 0
+  selfInverse : isSelfInverse t
+
 /-! ## Perfect intervals — a primitive predicate
 
 `isPerfect` is opaque: not defined in terms of other properties, only constrained

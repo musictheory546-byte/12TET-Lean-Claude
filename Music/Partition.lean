@@ -9,7 +9,7 @@ variable {m : ℕ}
 
 /-- The four classes partition ZMod m. -/
 theorem interval_partition [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     (Finset.univ : Finset (HarmonicInterval m)) =
       selfInverseSet t ∪ {p, p⁻¹} ∪ majorMinorIntervals p t := by
   simp only [majorMinorIntervals, selfInverseSet]

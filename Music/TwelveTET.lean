@@ -53,7 +53,7 @@ variable {m : ℕ}
 
 /-- t + 6 = 0. From p = t+1 (A7) and p+5 = 0 (A8). -/
 private lemma tritone_plus_six [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     t + 6 = 0 :=
   calc t + 6 = t + 1 + 5 := by ring
     _        = p + 5     := by rw [← perfect_above_tritone p t hp ht]
@@ -61,16 +61,16 @@ private lemma tritone_plus_six [NeZero m]
 
 /-- 12 = 0 in ZMod m. From t+6=0 and t+t=0. -/
 private lemma twelve_eq_zero [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     (12 : HarmonicInterval m) = 0 :=
   calc (12 : HarmonicInterval m)
       = (t + 6) + (t + 6) - (t + t) := by ring
-    _ = 0 + 0 - 0                   := by rw [tritone_plus_six p t hp ht, ht.2]
+    _ = 0 + 0 - 0                   := by rw [tritone_plus_six p t hp ht, ht.selfInverse]
     _ = 0                           := by ring
 
 /-- m ∣ 12. -/
 private lemma m_dvd_twelve [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ∣ 12 := by
   have h : (12 : ZMod m) = 0 := twelve_eq_zero p t hp ht
   have h12 : ((12 : ℕ) : ZMod m) = 0 := by exact_mod_cast h
@@ -78,10 +78,10 @@ private lemma m_dvd_twelve [NeZero m]
 
 /-- m is even: (2 : ZMod m) = 0 because 2t = 0 and t generates a copy of ZMod 2. -/
 private lemma m_even [NeZero m]
-    (t : HarmonicInterval m) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (t : HarmonicInterval m) (ht : IsTritone t) :
     2 ∣ m := by
-  have h2t : t + t = 0 := ht.2
-  have ht0 : t ≠ 0   := ht.1
+  have h2t : t + t = 0 := ht.selfInverse
+  have ht0 : t ≠ 0   := ht.ne_zero
   have hord : addOrderOf t = 2 := by
     haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
     apply addOrderOf_eq_prime
@@ -94,34 +94,34 @@ private lemma m_even [NeZero m]
 
 /-- m ≠ 2: p = t+1 = 0 in ZMod 2, contradicting A4. -/
 private lemma m_ne_two [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 2 := by
   intro hm; subst hm
   have ht1 : t = 1 := by
-    clear hp p; revert t
+    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
     simp only [isSelfInverse]; decide
   exact perfect_nonzero p hp
     (by rw [perfect_above_tritone p t hp ht, ht1]; decide)
 
 /-- m ≠ 6: p+5 ≠ 0 in ZMod 6 for any p consistent with A7. -/
 private lemma m_ne_six [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 6 := by
   intro hm; subst hm
   have ht3 : t = 3 := by
-    clear hp p; revert t
+    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
     simp only [isSelfInverse]; decide
   have hp4 : p = 4 := by rw [perfect_above_tritone p t hp ht, ht3]; decide
   exact absurd (five_above_perfect p hp) (by simp only [hp4]; decide)
 
 /-- m ≠ 4: major/minor intervals cannot exist in ZMod 4. -/
 private lemma m_ne_four [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 4 := by
   intro hm; subst hm
   obtain ⟨i, hine, hiSI, hiP⟩ := major_minor_exists p t hp ht
   have ht2 : t = 2 := by
-    clear hp p; revert t
+    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
     simp only [isSelfInverse]; decide
   have hp3 : p = 3 := by rw [perfect_above_tritone p t hp ht, ht2]; decide
   have hpi : p⁻¹ = 1 := by simp only [HI_inv_eq_neg, hp3]; decide
@@ -133,7 +133,7 @@ private lemma m_ne_four [NeZero m]
 
 /-- **The 12TET theorem**: m = 12. -/
 theorem twelve_TET [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m = 12 := by
   have h1 := m_dvd_twelve p t hp ht
   have h2 := m_even t ht

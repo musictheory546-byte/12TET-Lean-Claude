@@ -122,14 +122,14 @@ via `fin_cases`, then executes the 10-step walk using `decide` at each step.
 private theorem prefixed_contains_complement [NeZero m]
     (p t : HarmonicInterval m)
     (hp : isPerfect p)
-    (ht : t ≠ 0 ∧ isSelfInverse t)
+    (ht : IsTritone t)
     (s : Finset (HarmonicInterval m))
     (hpre : stepMM p t s ⊆ s) :
     Finset.univ \ selfInverseSet t ⊆ s := by
   have hm := twelve_TET p t hp ht
   subst hm
   have ht6 : t = 6 := by
-    clear hp p hpre s; revert t
+    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p hpre s; revert t
     simp only [isSelfInverse]; decide
   have hp7 : p = 7 := by
     have := perfect_above_tritone p t hp ht; rw [ht6] at this; simpa using this
@@ -192,7 +192,7 @@ private theorem prefixed_contains_complement [NeZero m]
 private theorem complement_subset_nonSIReachable [NeZero m]
     (p t : HarmonicInterval m)
     (hp : isPerfect p)
-    (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (ht : IsTritone t) :
     Finset.univ \ selfInverseSet t ⊆ nonSIReachable p t := by
   intro i hi
   unfold nonSIReachable
@@ -203,7 +203,7 @@ private theorem complement_subset_nonSIReachable [NeZero m]
 theorem nonSIReachable_eq_complement [NeZero m]
     (p t : HarmonicInterval m)
     (hp : isPerfect p)
-    (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (ht : IsTritone t) :
     nonSIReachable p t = Finset.univ \ selfInverseSet t :=
   Finset.Subset.antisymm
     (nonSIReachable_subset_complement p t)

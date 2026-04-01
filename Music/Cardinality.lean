@@ -13,18 +13,18 @@ variable {m : ℕ}
 /-! ## Cardinality -/
 
 theorem selfInverseSet_card [NeZero m]
-    (t : HarmonicInterval m) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (t : HarmonicInterval m) (ht : IsTritone t) :
     (selfInverseSet t).card = 2 :=
-  Finset.card_pair (Ne.symm ht.1)
+  Finset.card_pair (Ne.symm ht.ne_zero)
 
 private theorem nonSIReachable_card [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     (nonSIReachable p t).card = m - 2 := by
   rw [nonSIReachable_eq_complement p t hp ht, Finset.card_sdiff]
   simp [Finset.card_univ, ZMod.card, selfInverseSet_card t ht]
 
 private theorem perfect_pair_subset_nonSIReachable [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     ({p, p⁻¹} : Finset (HarmonicInterval m)) ⊆ nonSIReachable p t := by
   rw [nonSIReachable_eq_complement p t hp ht]
   simp only [selfInverseSet, Finset.subset_sdiff, Finset.subset_univ, true_and,
@@ -32,14 +32,14 @@ private theorem perfect_pair_subset_nonSIReachable [NeZero m]
   intro i hi
   rcases hi with rfl | rfl
   · simp only [not_or]
-    exact ⟨perfect_nonzero _ hp, fun h => perfect_not_SI _ hp (h ▸ ht.2)⟩
+    exact ⟨perfect_nonzero _ hp, fun h => perfect_not_SI _ hp (h ▸ ht.selfInverse)⟩
   · simp only [not_or]
     exact ⟨by simp [HI_inv_eq_neg, neg_eq_zero, perfect_nonzero _ hp],
-           fun h => perfect_not_SI _ (perfect_inv_closed _ hp) (h ▸ ht.2)⟩
+           fun h => perfect_not_SI _ (perfect_inv_closed _ hp) (h ▸ ht.selfInverse)⟩
 
 /-- The major/minor class has m - 4 elements. -/
 theorem majorMinor_card [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     (majorMinorIntervals p t).card = m - 4 := by
   simp only [majorMinorIntervals]
   have hsub := perfect_pair_subset_nonSIReachable p t hp ht
@@ -52,6 +52,6 @@ theorem majorMinor_card [NeZero m]
 
 /-- **The major/minor cardinality theorem**: 8 elements in 12TET. -/
 theorem majorMinor_card_12 [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : t ≠ 0 ∧ isSelfInverse t) :
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     (majorMinorIntervals p t).card = 8 := by
   rw [majorMinor_card p t hp ht, twelve_TET p t hp ht]
