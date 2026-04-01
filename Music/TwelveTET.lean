@@ -96,8 +96,8 @@ private lemma m_ne_two [NeZero m]
   have ht1 : t = 1 := by
     have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
     simp only [isSelfInverse]; decide
-  exact perfect_nonzero p hp
-    (by rw [perfect_above_tritone p t hp ht, ht1]; decide)
+  have hp0 : p = 0 := by rw [perfect_above_tritone p t hp ht, ht1]; decide
+  exact absurd hp0 (perfect_nonzero p hp)
 
 /-- m ≠ 6: p+5 ≠ 0 in ZMod 6 for any p consistent with A7. -/
 private lemma m_ne_six [NeZero m]
