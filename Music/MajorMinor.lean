@@ -14,8 +14,8 @@ The major/minor class is the least fixed point of a monotone step operator `step
 on the complete lattice `(Finset (HarmonicInterval m), ⊆)`. The operator steps ±1
 from `s ∪ {p, p⁻¹}` and removes the self-inverse set `{0, t}`.
 
-By the Knaster-Tarski theorem (`OrderHom.lfp`), the least fixed point exists.
-We prove it equals `Finset.univ \ {0, t}` by a 10-step walk argument in ZMod 12.
+We construct the lfp as the intersection of all prefixed points of `stepMM`, and prove
+it equals `Finset.univ \ {0, t}` by a 10-step walk argument in ZMod 12.
 
 Tracing the iteration in ZMod 12 (t=6, p=7, p⁻¹=5):
 
