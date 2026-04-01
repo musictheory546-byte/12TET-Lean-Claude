@@ -46,18 +46,6 @@ Resolved. Replaced `linear_combination h` with `nth_rw 1 [h]; exact neg_add_canc
 2.2 twelve_eq_zero — the algebraic identity is opaque (TwelveTET.lean:63–69)
 Resolved.
 
-```lean
-calc (12 : HarmonicInterval m)
-    = (t + 6) + (t + 6) - (t + t) := by ring
-  _ = 0 + 0 - 0                   := by rw [tritone_plus_six p t hp ht, ht.selfInverse]
-  _ = 0                           := by ring
-```
-The identity `12 = 2(t+6) - (t+t)` is not explained; a reader must verify it. `linear_combination` makes the dependency explicit:
-```lean
-linear_combination 2 * tritone_plus_six p t hp ht - ht.selfInverse
-```
-This states directly: `12 = 2·(t+6=0) − (t+t=0)`.
-
 2.3 m_even — the chain through Nat.card (TwelveTET.lean:86–88)
 
 ```lean
