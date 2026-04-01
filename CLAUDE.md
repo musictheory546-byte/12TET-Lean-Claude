@@ -20,5 +20,8 @@
 ### Grep
 * you can run any `grep` command on directories under `/Users/lean`
 
+### Lean
+* you can run `lake build Music` in directory /Users/lean/Documents/Working/music. Do that after you have made edits. 
+
 ### Find
 * you can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`
