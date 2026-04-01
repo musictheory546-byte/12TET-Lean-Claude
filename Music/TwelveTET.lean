@@ -78,13 +78,11 @@ private lemma m_dvd_twelve [NeZero m]
 private lemma m_even [NeZero m]
     (t : HarmonicInterval m) (ht : IsTritone t) :
     2 ∣ m := by
-  have h2t : t + t = 0 := ht.selfInverse
-  have ht0 : t ≠ 0   := ht.ne_zero
   have hord : addOrderOf t = 2 := by
     haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
     apply addOrderOf_eq_prime
-    · rw [two_nsmul]; exact h2t
-    · exact ht0
+    · rw [two_nsmul]; exact ht.selfInverse
+    · exact ht.ne_zero
   have hdvd : addOrderOf t ∣ m := by
     have h : addOrderOf t ∣ Nat.card (ZMod m) := addOrderOf_dvd_natCard t
     rwa [Nat.card_eq_fintype_card, ZMod.card] at h
