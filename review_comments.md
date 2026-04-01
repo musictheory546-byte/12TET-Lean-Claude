@@ -27,51 +27,24 @@ unison is exactly 0. Without @[simp] or @[reducible], simp will not unfold it, a
 Suggested idiom: Either mark it @[simp] def unison ... := 0, or mark it abbrev so it unfolds transparently.
 
 1.3 inv_closed is dead code (Basic.lean:20)
-
-
-def inv_closed [NeZero m] (s : Finset (HarmonicInterval m)) : Prop := ∀ i ∈ s, i⁻¹ ∈ s
-This definition is declared but never referenced in any subsequent module. It should be removed.
+Resolved
 
 1.4 The tritone hypothesis is a raw conjunction throughout
-
-
-(ht : t ≠ 0 ∧ isSelfInverse t)
-This conjunction appears in thirteen theorem signatures. Every use destructures it as ht.1/ht.2. In Lean 4, the idiomatic approach is a named structure or predicate:
-
-
-structure IsTritone [NeZero m] (t : HarmonicInterval m) : Prop where
-  ne_zero     : t ≠ 0
-  selfInverse : isSelfInverse t
-Then ht.ne_zero, ht.selfInverse are self-documenting, and the axiom signatures read more cleanly.
+Resolved.
 
 1.5 m_ne_two/m_ne_four/m_ne_six are structurally redundant (TwelveTET.lean:95–132)
 
 All three have the same pattern: assume m = n, subst, pin t (and sometimes p) by decide, derive a contradiction. They are factored out for legibility but twelve_TET already dispatches all cases via interval_cases m <;> omega — the three named lemmas serve only as labeled steps in that final proof. Inlining them (or reducing the set to h3/h4/h5 without separate names) would be more concise. Alternatively, since twelve_TET calls them immediately, having them as private lemmas is fine, but their proofs could all follow a single tactic block pattern.
 
 1.6 exact_mod_cast introduces an unnecessary step (TwelveTET.lean:76)
+Resolved
 
-
-have h : (12 : ZMod m) = 0 := twelve_eq_zero p t hp ht
-have h12 : ((12 : ℕ) : ZMod m) = 0 := by exact_mod_cast h
-exact (CharP.cast_eq_zero_iff (ZMod m) m 12).mp h12
-(12 : ZMod m) and ((12 : ℕ) : ZMod m) are definitionally equal. The cast step is not needed:
-
-
-exact (CharP.cast_eq_zero_iff (ZMod m) m 12).mp (twelve_eq_zero p t hp ht)
 1.7 Redundant have destructuring in m_even (TwelveTET.lean:83–84)
+Resolved
 
-
-have h2t : t + t = 0 := ht.2
-have ht0 : t ≠ 0   := ht.1
-These two lines are immediately used in the next two subgoals. Lean 4 can reference ht.2 and ht.1 directly at the call site. The named intermediates add no information.
 
 1.8 Module docstring invokes Knaster-Tarski but the proof does not use it (MajorMinor.lean:13)
-
-"By the Knaster-Tarski theorem (OrderHom.lfp), the least fixed point exists."
-
-OrderHom.lfp is never imported or invoked. The lfp is instead constructed manually as an intersection of prefixed points (Finset.univ.filter ...). The docstring is misleading.
-
-Suggested: Replace with "We construct the lfp as the intersection of all prefixed points of stepMM."
+Resolved
 
 ## Unclear lines of argument
 2.1 selfInverse_iff_eq_neg backward direction (Basic.lean:32)
