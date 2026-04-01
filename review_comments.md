@@ -2,10 +2,9 @@
 
 ## 1. Close `prefixed_contains_complement` with `decide`
 
-After `subst hm; subst ht6; subst hp7`, all variables are concrete and the goal is a decidable
-proposition over the finite type `ZMod 12`. The entire 10-step walk (`h1`–`h10`, the `step`
-helper, `fp7`, `fp5`, the final `fin_cases`) could be replaced by a single `decide`. This is the
-largest simplification available — roughly 40 lines become one.
+Not actionable. After `subst ht6; subst hp7`, the set `s : Finset (ZMod 12)` remains universally
+quantified — it is a hypothesis, not a concrete value. `decide` requires a closed term; the goal
+is not decidable in this form. The 10-step walk is necessary.
 
 ## 2. Extract the t-pinning pattern
 Resolved. Added `tritone_eq` to `Consequences.lean`. The four call sites in `TwelveTET.lean` and
