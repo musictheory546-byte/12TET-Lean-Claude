@@ -41,17 +41,7 @@ Resolved
 ## Unclear lines of argument
 
 2.1 selfInverse_iff_eq_neg backward direction (Basic.lean:30)
-
-```lean
-fun h => by simp only [isSelfInverse]; linear_combination h
-```
-Proves `i + i = 0` from `h : i = -i`. The `linear_combination` call is correct: the residual `(i + i) - (i - (-i))` reduces to 0 by `neg_neg`. The idea — substitute and cancel — is not visible from the tactic name alone.
-
-Alternative that names the step:
-```lean
-fun h => by simp only [isSelfInverse]; rw [h]; exact neg_add_cancel i
-```
-`rw [h]` replaces `i` with `-i` giving `(-i) + (-i) = 0`, then `neg_add_cancel` applies.
+Resolved. Replaced `linear_combination h` with `nth_rw 1 [h]; exact neg_add_cancel i`: rewrite only the first `i` to `-i`, giving `-i + i = 0`, then close with `neg_add_cancel`.
 
 2.2 twelve_eq_zero — the algebraic identity is opaque (TwelveTET.lean:63–69)
 

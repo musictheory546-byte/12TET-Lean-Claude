@@ -26,8 +26,9 @@ theorem unison_is_self_inverse [NeZero m] : isSelfInverse (unison (m := m)) := b
   simp [isSelfInverse, unison]
 
 theorem selfInverse_iff_eq_neg [NeZero m] (i : HarmonicInterval m) :
-    isSelfInverse i ↔ i = -i :=
-  ⟨eq_neg_of_add_eq_zero_left, fun h => by simp only [isSelfInverse]; linear_combination h⟩
+    isSelfInverse i ↔ i = i⁻¹ :=
+  ⟨eq_neg_of_add_eq_zero_left,
+   fun h => by simp only [isSelfInverse]; nth_rw 1 [h]; exact neg_add_cancel i⟩
 
 theorem selfInverse_iff_inv_eq [NeZero m] (i : HarmonicInterval m) :
     isSelfInverse i ↔ i⁻¹ = i := by
