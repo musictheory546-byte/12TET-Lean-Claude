@@ -26,13 +26,18 @@ theorem perfect_nonzero [NeZero m]
     (p : HarmonicInterval m) (hp : isPerfect p) : p ≠ 0 :=
   fun h => perfect_not_SI p hp (h ▸ unison_is_self_inverse)
 
-/-- **A5**: The perfect interval is unique as a pair. -/
-axiom perfect_unique [NeZero m]
-    (p q : HarmonicInterval m) (hp : isPerfect p) (hq : isPerfect q) : q = p ∨ q = p⁻¹
+/-- **A5**: The perfect class is exactly the pair {p, p⁻¹}. -/
+axiom perfect_iff [NeZero m]
+    (p : HarmonicInterval m) (hp : isPerfect p)
+    (q : HarmonicInterval m) : isPerfect q ↔ q = p ∨ q = p⁻¹
 
-/-- **A5'**: The inverse of a perfect interval is perfect. -/
-axiom perfect_inv_closed [NeZero m]
-    (p : HarmonicInterval m) (hp : isPerfect p) : isPerfect p⁻¹
+theorem perfect_unique [NeZero m]
+    (p q : HarmonicInterval m) (hp : isPerfect p) (hq : isPerfect q) : q = p ∨ q = p⁻¹ :=
+  (perfect_iff p hp q).mp hq
+
+theorem perfect_inv_closed [NeZero m]
+    (p : HarmonicInterval m) (hp : isPerfect p) : isPerfect p⁻¹ :=
+  (perfect_iff p hp p⁻¹).mpr (Or.inr rfl)
 
 /-- **A7**: The perfect interval sits one semitone above the tritone. In 12TET: 7 = 6+1. -/
 axiom perfect_above_tritone [NeZero m]

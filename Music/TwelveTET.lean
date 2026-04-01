@@ -38,8 +38,9 @@ We classify them into four classes:
   A3.  perfect_exists        : ∃ p, isPerfect p
   A4.  perfect_not_SI        : isPerfect p → ¬isSelfInverse p
        perfect_nonzero       : derived from A4 + unison_is_self_inverse
-  A5.  perfect_unique        : isPerfect p → isPerfect q → q = p ∨ q = p⁻¹
-  A5'. perfect_inv_closed    : isPerfect p → isPerfect p⁻¹
+  A5.  perfect_iff           : isPerfect q ↔ q = p ∨ q = p⁻¹
+       perfect_unique        : derived from A5
+       perfect_inv_closed    : derived from A5
   A6.  perfect_above_tritone : isPerfect p → p = t + 1
   A7.  five_above_perfect    : isPerfect p → p + 5 = 0
   A8.  major_minor_exists    : ∃ non-unison non-SI non-perfect interval
