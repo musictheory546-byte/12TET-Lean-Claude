@@ -129,9 +129,7 @@ private theorem prefixed_contains_complement [NeZero m]
     Finset.univ \ selfInverseSet t ⊆ s := by
   have hm := twelve_TET p t hp ht
   subst hm
-  have ht6 : t = 6 := by
-    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p hpre s; revert t
-    simp only [isSelfInverse]; decide
+  have ht6 : t = 6 := tritone_eq t ht 6 (by decide) (by decide)
   have hp7 : p = 7 := by
     have := perfect_above_tritone p t hp ht; rw [ht6] at this; simpa using this
   have hpi5 : p⁻¹ = 5 := by

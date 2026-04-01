@@ -4,6 +4,12 @@ import Music.Axioms
 
 variable {m : ℕ}
 
+/-- Pin the tritone to a concrete value: if `c` is also a non-zero self-inverse then `t = c`. -/
+theorem tritone_eq [NeZero m]
+    (t : HarmonicInterval m) (ht : IsTritone t)
+    (c : HarmonicInterval m) (hc0 : c ≠ 0) (hcsi : c + c = 0) : t = c :=
+  tritone_unique t c ht { ne_zero := hc0, selfInverse := hcsi }
+
 theorem selfInverse_eq_zero_or_tritone [NeZero m]
     (t i : HarmonicInterval m) (ht : IsTritone t) (hi : isSelfInverse i) :
     i = 0 ∨ i = t := by

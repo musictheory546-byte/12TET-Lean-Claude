@@ -8,14 +8,8 @@ helper, `fp7`, `fp5`, the final `fin_cases`) could be replaced by a single `deci
 largest simplification available — roughly 40 lines become one.
 
 ## 2. Extract the t-pinning pattern
-
-The block
-```lean
-have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht ...; revert t
-simp only [isSelfInverse]; decide
-```
-appears verbatim five times (`m_ne_two`, `m_ne_six`, `m_ne_four`, `prefixed_contains_complement`,
-`m_even`). It could be a private lemma, or at minimum a tactic macro, eliminating the repetition.
+Resolved. Added `tritone_eq` to `Consequences.lean`. The four call sites in `TwelveTET.lean` and
+`MajorMinor.lean` now read `tritone_eq t ht c (by decide) (by decide)`.
 
 ## 3. Replace A5 + A5' with a single biconditional
 

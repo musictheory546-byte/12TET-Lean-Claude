@@ -92,9 +92,7 @@ private lemma m_ne_two [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 2 := by
   intro hm; subst hm
-  have ht1 : t = 1 := by
-    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
-    simp only [isSelfInverse]; decide
+  have ht1 : t = 1 := tritone_eq t ht 1 (by decide) (by decide)
   have hp0 : p = 0 := by rw [perfect_above_tritone p t hp ht, ht1]; decide
   exact absurd hp0 (perfect_nonzero p hp)
 
@@ -103,9 +101,7 @@ private lemma m_ne_six [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 6 := by
   intro hm; subst hm
-  have ht3 : t = 3 := by
-    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
-    simp only [isSelfInverse]; decide
+  have ht3 : t = 3 := tritone_eq t ht 3 (by decide) (by decide)
   have hp4 : p = 4 := by rw [perfect_above_tritone p t hp ht, ht3]; decide
   exact absurd (five_above_perfect p hp) (by simp only [hp4]; decide)
 
@@ -115,9 +111,7 @@ private lemma m_ne_four [NeZero m]
     m ≠ 4 := by
   intro hm; subst hm
   obtain ⟨i, hine, hiSI, hiP⟩ := major_minor_exists p t hp ht
-  have ht2 : t = 2 := by
-    have hsi := ht.selfInverse; have hn0 := ht.ne_zero; clear ht hp p; revert t
-    simp only [isSelfInverse]; decide
+  have ht2 : t = 2 := tritone_eq t ht 2 (by decide) (by decide)
   have hp3 : p = 3 := by rw [perfect_above_tritone p t hp ht, ht2]; decide
   have hpi : p⁻¹ = 1 := by simp only [HI_inv_eq_neg, hp3]; decide
   fin_cases i <;> simp only at *
