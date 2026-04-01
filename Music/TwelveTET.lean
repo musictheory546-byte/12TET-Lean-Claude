@@ -40,10 +40,9 @@ We classify them into four classes:
   A4'. perfect_not_SI        : isPerfect p → ¬isSelfInverse p
   A5.  perfect_unique        : isPerfect p → isPerfect q → q = p ∨ q = p⁻¹
   A5'. perfect_inv_closed    : isPerfect p → isPerfect p⁻¹
-  A6.  perfect_generates     : isPerfect p → IsUnit p     (circle of fifths)
-  A7.  perfect_above_tritone : isPerfect p → p = t + 1
-  A8.  five_above_perfect    : isPerfect p → p + 5 = 0
-  A9.  major_minor_exists    : ∃ non-unison non-SI non-perfect interval
+  A6.  perfect_above_tritone : isPerfect p → p = t + 1
+  A7.  five_above_perfect    : isPerfect p → p + 5 = 0
+  A8.  major_minor_exists    : ∃ non-unison non-SI non-perfect interval
 
 From A1–A9 we prove m = 12, then prove the major/minor lfp has exactly 8 elements.
 -/

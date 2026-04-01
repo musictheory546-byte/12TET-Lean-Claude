@@ -1,4 +1,3 @@
-import Mathlib.Algebra.Group.Units.Defs -- IsUnit
 import Music.Basic
 
 variable {m : ℕ}
@@ -33,10 +32,6 @@ axiom perfect_unique [NeZero m]
 /-- **A5'**: The inverse of a perfect interval is perfect. -/
 axiom perfect_inv_closed [NeZero m]
     (p : HarmonicInterval m) (hp : isPerfect p) : isPerfect p⁻¹
-
-/-- **A6**: The perfect interval generates ZMod m (circle of fifths). -/
-axiom perfect_generates [NeZero m]
-    (p : HarmonicInterval m) (hp : isPerfect p) : IsUnit p
 
 /-- **A7**: The perfect interval sits one semitone above the tritone. In 12TET: 7 = 6+1. -/
 axiom perfect_above_tritone [NeZero m]
