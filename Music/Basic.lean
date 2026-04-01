@@ -5,7 +5,7 @@ import Mathlib.Tactic.LinearCombination -- linear_combination
 
 abbrev HarmonicInterval (m : ℕ) := ZMod m
 
-def unison [NeZero m] : HarmonicInterval m := 0
+@[simp] def unison [NeZero m] : HarmonicInterval m := 0
 
 variable {m : ℕ}
 
