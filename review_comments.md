@@ -12,19 +12,12 @@ Perform a rigorous review of this proof. Report on:
 ## Non-idiomatic use of Lean
 1.1 Inv on an additive group (Basic.lean:12)
 
-
-instance [NeZero m] : Inv (HarmonicInterval m) where inv := Neg.neg
-Inv is the multiplicative inverse class; Neg is the additive one. Installing Inv := Neg.neg is a type-class lie: it works mechanically but makes i⁻¹ mean -i, which is confusing and requires two boilerplate @[simp] lemmas (HI_inv_eq_neg, HI_inv_inv) plus repeated simp only [HI_inv_eq_neg, ...] calls throughout proofs.
-
 Suggested idiom: Drop the Inv instance and use -p everywhere. Axioms like q = p ∨ q = p⁻¹ become q = p ∨ q = -p, which is the standard Mathlib form for additive groups.
 
+Rejected. Using  p⁻¹ rather than -p is a style choice that I believe maintains the musical sense. This isn't just number theory.
+
 1.2 unison not @[simp] (Basic.lean:8)
-
-
-def unison [NeZero m] : HarmonicInterval m := 0
-unison is exactly 0. Without @[simp] or @[reducible], simp will not unfold it, and unison_is_self_inverse uses simp [isSelfInverse, unison] to force the unfold explicitly. Every proof that reaches unison must carry this hint.
-
-Suggested idiom: Either mark it @[simp] def unison ... := 0, or mark it abbrev so it unfolds transparently.
+resolved
 
 1.3 inv_closed is dead code (Basic.lean:20)
 Resolved
@@ -33,8 +26,7 @@ Resolved
 Resolved.
 
 1.5 m_ne_two/m_ne_four/m_ne_six are structurally redundant (TwelveTET.lean:95–132)
-
-All three have the same pattern: assume m = n, subst, pin t (and sometimes p) by decide, derive a contradiction. They are factored out for legibility but twelve_TET already dispatches all cases via interval_cases m <;> omega — the three named lemmas serve only as labeled steps in that final proof. Inlining them (or reducing the set to h3/h4/h5 without separate names) would be more concise. Alternatively, since twelve_TET calls them immediately, having them as private lemmas is fine, but their proofs could all follow a single tactic block pattern.
+Resolved by: Alternatively, since twelve_TET calls them immediately, having them as private lemmas is fine, but their proofs could all follow a single tactic block pattern.
 
 1.6 exact_mod_cast introduces an unnecessary step (TwelveTET.lean:76)
 Resolved
