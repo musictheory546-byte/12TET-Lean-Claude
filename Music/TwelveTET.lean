@@ -7,6 +7,7 @@ import Mathlib.Logic.Basic                -- Fact
 import Mathlib.SetTheory.Cardinal.Finite  -- Nat.card_eq_fintype_card
 import Mathlib.Tactic.IntervalCases       -- interval_cases
 import Mathlib.Tactic.NormNum            -- norm_num
+import Mathlib.Tactic.LinearCombination  -- linear_combination
 import Mathlib.Tactic.Ring               -- ring
 import Music.Basic
 import Music.Axioms
@@ -62,11 +63,9 @@ private lemma tritone_plus_six [NeZero m]
 /-- 12 = 0 in ZMod m. From t+6=0 and t+t=0. -/
 private lemma twelve_eq_zero [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
-    (12 : HarmonicInterval m) = 0 :=
-  calc (12 : HarmonicInterval m)
-      = (t + 6) + (t + 6) - (t + t) := by ring
-    _ = 0 + 0 - 0                   := by rw [tritone_plus_six p t hp ht, ht.selfInverse]
-    _ = 0                           := by ring
+    (12 : HarmonicInterval m) = 0 := by
+  have hsi : t + t = 0 := ht.selfInverse
+  linear_combination 2 * tritone_plus_six p t hp ht - hsi
 
 /-- m ∣ 12. -/
 private lemma m_dvd_twelve [NeZero m]

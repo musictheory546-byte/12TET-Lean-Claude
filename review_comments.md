@@ -44,6 +44,7 @@ Resolved
 Resolved. Replaced `linear_combination h` with `nth_rw 1 [h]; exact neg_add_cancel i`: rewrite only the first `i` to `-i`, giving `-i + i = 0`, then close with `neg_add_cancel`.
 
 2.2 twelve_eq_zero — the algebraic identity is opaque (TwelveTET.lean:63–69)
+Resolved.
 
 ```lean
 calc (12 : HarmonicInterval m)
