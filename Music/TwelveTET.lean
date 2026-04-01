@@ -36,8 +36,8 @@ We classify them into four classes:
   A1.  tritone_exists        : ∃ t ≠ 0, t + t = 0       (forces m even)
   A2.  tritone_unique        : unique such t
   A3.  perfect_exists        : ∃ p, isPerfect p
-  A4.  perfect_nonzero       : isPerfect p → p ≠ 0
-  A4'. perfect_not_SI        : isPerfect p → ¬isSelfInverse p
+  A4.  perfect_not_SI        : isPerfect p → ¬isSelfInverse p
+       perfect_nonzero       : derived from A4 + unison_is_self_inverse
   A5.  perfect_unique        : isPerfect p → isPerfect q → q = p ∨ q = p⁻¹
   A5'. perfect_inv_closed    : isPerfect p → isPerfect p⁻¹
   A6.  perfect_above_tritone : isPerfect p → p = t + 1

@@ -17,13 +17,14 @@ axiom tritone_unique [NeZero m]
 /-- **A3**: A perfect interval exists. -/
 axiom perfect_exists [NeZero m] : ∃ p : HarmonicInterval m, isPerfect p
 
-/-- **A4**: Perfect intervals are non-unison. -/
-axiom perfect_nonzero [NeZero m]
-    (p : HarmonicInterval m) (hp : isPerfect p) : p ≠ 0
-
-/-- **A4'**: Perfect intervals are not self-inverse. -/
+/-- **A4**: Perfect intervals are not self-inverse. -/
 axiom perfect_not_SI [NeZero m]
     (p : HarmonicInterval m) (hp : isPerfect p) : ¬isSelfInverse p
+
+/-- Perfect intervals are non-unison. Derived from A4 and `unison_is_self_inverse`. -/
+theorem perfect_nonzero [NeZero m]
+    (p : HarmonicInterval m) (hp : isPerfect p) : p ≠ 0 :=
+  fun h => perfect_not_SI p hp (h ▸ unison_is_self_inverse)
 
 /-- **A5**: The perfect interval is unique as a pair. -/
 axiom perfect_unique [NeZero m]
