@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Ring.Defs        -- eq_neg_of_add_eq_zero_left
-import Mathlib.Data.Finset.Basic        -- Finset (inv_closed)
+import Mathlib.Data.Finset.Basic        -- Finset
 import Mathlib.Data.ZMod.Defs          -- ZMod
 import Mathlib.Tactic.LinearCombination -- linear_combination
 
@@ -16,8 +16,6 @@ instance [NeZero m] : Inv (HarmonicInterval m) where inv := Neg.neg
 
 theorem inverses_span_octaves [NeZero m] (i : HarmonicInterval m) : i + i⁻¹ = unison :=
   add_neg_cancel i
-
-def inv_closed [NeZero m] (s : Finset (HarmonicInterval m)) : Prop := ∀ i ∈ s, i⁻¹ ∈ s
 
 /-! ## Self-inverse intervals -/
 
