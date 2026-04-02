@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Ring.Defs        -- eq_neg_of_add_eq_zero_left
 import Mathlib.Data.Finset.Basic        -- Finset
-import Mathlib.Data.ZMod.Defs          -- ZMod
+import Mathlib.Data.ZMod.Basic         -- ZMod, ZMod.val
 import Mathlib.Tactic.LinearCombination -- linear_combination
 
 abbrev HarmonicInterval (m : ℕ) := ZMod m
@@ -9,7 +9,7 @@ abbrev HarmonicInterval (m : ℕ) := ZMod m
 
 variable {m : ℕ}
 
-instance [NeZero m] : Inv (HarmonicInterval m) where inv := Neg.neg
+instance (priority := 2000) [NeZero m] : Inv (HarmonicInterval m) where inv := Neg.neg
 
 @[simp] lemma HI_inv_eq_neg [NeZero m] (i : HarmonicInterval m) : i⁻¹ = -i := rfl
 @[simp] lemma HI_inv_inv [NeZero m] (i : HarmonicInterval m) : i⁻¹⁻¹ = i := neg_neg i

@@ -41,18 +41,78 @@ We classify them into four classes:
   A5.  perfect_iff           : isPerfect q ↔ q = p ∨ q = p⁻¹
        perfect_unique        : derived from A5
        perfect_inv_closed    : derived from A5
-  A6.  perfect_above_tritone : isPerfect p → p = t + 1
+  A6.  perfect_least_above_tritone : p is the least non-SI interval above t
+       perfect_above_tritone : p = t + 1, derived from A6 and m ≥ 4
   A7.  five_above_perfect    : isPerfect p → p + 5 = 0
   A8.  major_minor_exists    : ∃ non-unison non-SI non-perfect interval
 
-From A1–A9 we prove m = 12, then prove the major/minor lfp has exactly 8 elements.
+From A1–A8 we prove m = 12, then prove the major/minor lfp has exactly 8 elements.
 -/
 
 variable {m : ℕ}
 
 /-! # Deriving m = 12 -/
 
-/-- t + 6 = 0. From p = t+1 (A7) and p+5 = 0 (A8). -/
+/-- m is even: 2t = 0 and t generates a copy of ZMod 2. -/
+private lemma m_even [NeZero m]
+    (t : HarmonicInterval m) (ht : IsTritone t) :
+    2 ∣ m := by
+  have hord : addOrderOf t = 2 := by
+    haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
+    apply addOrderOf_eq_prime
+    · rw [two_nsmul]; exact ht.selfInverse
+    · exact ht.ne_zero
+  have hdvd : addOrderOf t ∣ m := by
+    have h : addOrderOf t ∣ Nat.card (ZMod m) := addOrderOf_dvd_natCard t
+    rwa [Nat.card_eq_fintype_card, ZMod.card] at h  -- group order of ZMod m is m
+  exact hord ▸ hdvd
+
+/-- m ≠ 2: in ZMod 2 every element is self-inverse, contradicting A4. -/
+private lemma m_ne_two [NeZero m]
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
+    m ≠ 2 := by
+  intro hm; subst hm
+  exact perfect_not_SI p hp (show p + p = 0 from by fin_cases p <;> decide)
+
+/-- p = t + 1. Derived from A6 (minimality) and the fact that t+1 is non-self-inverse. -/
+lemma perfect_above_tritone [NeZero m]
+    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
+    p = t + 1 := by
+  obtain ⟨hgt, hmin⟩ := perfect_least_above_tritone p t hp ht
+  have hm_pos : 0 < m := Nat.pos_of_ne_zero (NeZero.ne m)
+  -- m ≥ 4: m is even and ≠ 2
+  have hm4 : 4 ≤ m := by
+    obtain ⟨k, hk⟩ := m_even t ht; have hn2 := m_ne_two p t hp ht; omega
+  -- 2 ≠ 0 in ZMod m since m ≥ 4
+  have h2ne : (2 : HarmonicInterval m) ≠ 0 := fun h =>
+    absurd (Nat.le_of_dvd (by norm_num) ((CharP.cast_eq_zero_iff (ZMod m) m 2).mp h))
+           (by omega)
+  -- t + 1 is not self-inverse: (t+1)+(t+1) = 2t+2 = 2 ≠ 0
+  have ht1_nsi : ¬isSelfInverse (t + 1) := by
+    intro h
+    apply h2ne
+    have : t + 1 + (t + 1) = 0 := h
+    have : t + t = 0 := ht.selfInverse
+    linear_combination ‹t + 1 + (t + 1) = 0› - ‹t + t = 0›
+  -- t + 1 ≠ 0
+  have ht1_ne0 : t + 1 ≠ 0 := fun h => ht1_nsi (h ▸ unison_is_self_inverse)
+  -- val(t + 1) = val t + 1: no wraparound since val t + 1 < m
+  have hv1 : ZMod.val (1 : HarmonicInterval m) = 1 := ZMod.val_one'' (by omega)
+  have hlt_m : ZMod.val t + ZMod.val (1 : HarmonicInterval m) < m := by
+    rw [hv1]
+    by_contra h
+    push Not at h
+    have heq : ZMod.val t + 1 = m := by have := ZMod.val_lt t; omega
+    exact ht1_ne0 ((ZMod.val_eq_zero _).mp (by rw [ZMod.val_add, hv1, heq, Nat.mod_self]))
+  have hval : ZMod.val (t + 1) = ZMod.val t + 1 := by
+    rw [ZMod.val_add_of_lt hlt_m, hv1]
+  -- By minimality: val p ≤ val(t+1) = val t + 1
+  have hle : ZMod.val p ≤ ZMod.val (t + 1) :=
+    hmin (t + 1) ht1_nsi (by omega)
+  -- val p = val(t+1), so p = t+1
+  exact ZMod.val_injective m (by omega)
+
+/-- t + 6 = 0. From p = t+1 and p+5 = 0. -/
 private lemma tritone_plus_six [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     t + 6 = 0 :=
@@ -73,30 +133,7 @@ private lemma m_dvd_twelve [NeZero m]
     m ∣ 12 :=
   (CharP.cast_eq_zero_iff (ZMod m) m 12).mp (twelve_eq_zero p t hp ht)
 
-/-- m is even: (2 : ZMod m) = 0 because 2t = 0 and t generates a copy of ZMod 2. -/
-private lemma m_even [NeZero m]
-    (t : HarmonicInterval m) (ht : IsTritone t) :
-    2 ∣ m := by
-  have hord : addOrderOf t = 2 := by
-    haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
-    apply addOrderOf_eq_prime
-    · rw [two_nsmul]; exact ht.selfInverse
-    · exact ht.ne_zero
-  have hdvd : addOrderOf t ∣ m := by
-    have h : addOrderOf t ∣ Nat.card (ZMod m) := addOrderOf_dvd_natCard t
-    rwa [Nat.card_eq_fintype_card, ZMod.card] at h  -- group order of ZMod m is m
-  exact hord ▸ hdvd
-
-/-- m ≠ 2: p = t+1 = 0 in ZMod 2, contradicting A4. -/
-private lemma m_ne_two [NeZero m]
-    (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
-    m ≠ 2 := by
-  intro hm; subst hm
-  have ht1 : t = 1 := tritone_eq t ht 1 (by decide) (by decide)
-  have hp0 : p = 0 := by rw [perfect_above_tritone p t hp ht, ht1]; decide
-  exact absurd hp0 (perfect_nonzero p hp)
-
-/-- m ≠ 6: p+5 ≠ 0 in ZMod 6 for any p consistent with A7. -/
+/-- m ≠ 6: p+5 ≠ 0 in ZMod 6 for any p consistent with A6. -/
 private lemma m_ne_six [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
     m ≠ 6 := by

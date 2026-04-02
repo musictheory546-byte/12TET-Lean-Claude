@@ -39,10 +39,12 @@ theorem perfect_inv_closed [NeZero m]
     (p : HarmonicInterval m) (hp : isPerfect p) : isPerfect p⁻¹ :=
   (perfect_iff p hp p⁻¹).mpr (Or.inr rfl)
 
-/-- **A7**: The perfect interval sits one semitone above the tritone. In 12TET: 7 = 6+1. -/
-axiom perfect_above_tritone [NeZero m]
+/-- **A6**: The perfect interval is the least non-self-inverse interval above the tritone. -/
+axiom perfect_least_above_tritone [NeZero m]
     (p t : HarmonicInterval m) (hp : isPerfect p) (ht : IsTritone t) :
-    p = t + 1
+    ZMod.val t < ZMod.val p ∧
+    ∀ i : HarmonicInterval m, ¬isSelfInverse i →
+      ZMod.val t < ZMod.val i → ZMod.val p ≤ ZMod.val i
 
 /-- **A8**: Five semitones above the perfect interval reaches unison. In 12TET: 7+5=0. -/
 axiom five_above_perfect [NeZero m]
