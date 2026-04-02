@@ -18,19 +18,19 @@
 # Permissions
 ## Command Line Applications
 ### Grep
-* you can run any `grep` command on directories under `/Users/lean`
+* You can run any `grep` command on directories under `/Users/lean`
 
 ### Lean
-* you can run `lake build Music` in directory /Users/lean/Documents/Working/music. Do that after you have made edits. 
+* You can run `lake build Music` in directory /Users/lean/Documents/Working/music without confirming with me. Do that after you have made edits. This includes command lines with a `STDERROR` to `STDOUT` redirect and pipes to `grep`.
 
 ### Find
-* you can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`
+* You can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`.
 
 ### Git
-* you may perform repo metadata operations, but not commits of changes to files
+* You may perform repo metadata operations, but not commits of changes to files.
 
 # Hygene
-* if asked to action an item in list in a file, always update the file aftwards to reflect the changes made
+* If asked to action an item in list in a file, always update the file aftwards to reflect the changes made.
 
 # Strategy
 * When a proposed solution turns out to be difficult to implement, perhaps evidenced by several failed builds after each of a series of changes, revert and try again using a different approach.
