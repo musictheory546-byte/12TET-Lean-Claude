@@ -1,1 +1,8 @@
 /.lake
+doc/proof.toc
+doc/proof.synctex.gz
+doc/proof.out
+doc/proof.log
+doc/proof.fdb_latexmk
+doc/proof.dvi
+doc/proof.aux
