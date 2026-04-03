@@ -1,0 +1,469 @@
+\documentclass{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[section]
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+% -----------------------------------------------------------------------
+% Macros for subject-matter identifiers (used in literate entries)
+% -----------------------------------------------------------------------
+\newcommand{\leanHarmonicInterval}{\textsf{HarmonicInterval}}
+\newcommand{\leanIsTritone}{\textsf{IsTritone}}
+\newcommand{\leanisSelfInverse}{\textsf{isSelfInverse}}
+\newcommand{\leanisPerfect}{\textsf{isPerfect}}
+\newcommand{\leanselfInverseSet}{\textsf{selfInverseSet}}
+\newcommand{\leannonSIReachable}{\textsf{nonSIReachable}}
+\newcommand{\leanmajorMinorIntervals}{\textsf{majorMinorIntervals}}
+\newcommand{\leanstepMM}{\textsf{stepMM}}
+\newcommand{\leanunison}{\textsf{unison}}
+
+% -----------------------------------------------------------------------
+% Lean listing style
+% -----------------------------------------------------------------------
+\lstdefinelanguage{Lean4}{
+  % General structural keywords — 80% white
+  keywords={abbrev,by,class,def,else,end,fun,if,in,inductive,instance,
+            let,match,namespace,noncomputable,opaque,open,private,public,
+            section,structure,then,true,variable,where,with},
+  % Built-in tactics/strategies — 50% white
+  keywords=[2]{apply,by_cases,calc,constructor,decide,exact,ext,fin_cases,
+               have,haveI,intro,interval_cases,linear_combination,norm_num,
+               obtain,omega,rcases,refine,rfl,ring,rintro,rw,rwa,simp,
+               subst,unfold},
+  % Declaration keywords — 20% white
+  keywords=[3]{axiom,lemma,theorem},
+  sensitive=true,
+  morecomment=[l]{--},
+  morestring=[b]",
+}
+
+\definecolor{leanKeyLight}{gray}{0.8}
+\definecolor{leanKeyMid}{gray}{0.5}
+\definecolor{leanKeyDark}{gray}{0.2}
+
+\lstset{
+  language=Lean4,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries\color{leanKeyLight},
+  keywordstyle=[2]\bfseries\color{leanKeyMid},
+  keywordstyle=[3]\bfseries\color{leanKeyDark},
+  commentstyle=\itshape\color{gray},
+  columns=flexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  frame=none,
+  numbers=left,
+  numberstyle=\footnotesize,
+  numbersep=8pt,
+  stepnumber=2,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {HarmonicInterval}{\leanHarmonicInterval}{14}
+    {IsTritone}{\leanIsTritone}{9}
+    {isSelfInverse}{\leanisSelfInverse}{12}
+    {isPerfect}{\leanisPerfect}{9}
+    {selfInverseSet}{\leanselfInverseSet}{14}
+    {nonSIReachable}{\leannonSIReachable}{14}
+    {majorMinorIntervals}{\leanmajorMinorIntervals}{19}
+    {stepMM}{\leanstepMM}{6}
+    {unison}{\leanunison}{6}
+    {ℕ}{$\mathbb{N}$}{1}
+    {ℤ}{$\mathbb{Z}$}{1}
+    {∀}{$\forall$}{1}
+    {∃}{$\exists$}{1}
+    {∧}{$\wedge$}{1}
+    {∨}{$\vee$}{1}
+    {¬}{$\neg$}{1}
+    {→}{$\to$}{1}
+    {↔}{$\leftrightarrow$}{1}
+    {∈}{$\in$}{1}
+    {∉}{$\notin$}{1}
+    {∩}{$\cap$}{1}
+    {∪}{$\cup$}{1}
+    {≤}{$\leq$}{1}
+    {≥}{$\geq$}{1}
+    {≠}{$\neq$}{1}
+    {⊂}{$\subset$}{1}
+    {⊆}{$\subseteq$}{1}
+    {⁻¹}{${}^{-1}$}{1}
+    {⊢}{$\vdash$}{1}
+    {·}{$\cdot$}{1}
+    {λ}{$\lambda$}{1}
+    {‹}{$\langle$}{1}
+    {›}{$\rangle$}{1}
+    {⟨}{$\langle$}{1}
+    {⟩}{$\rangle$}{1}
+    {∣}{$\mid$}{1}
+    {▸}{$\triangleright$}{1}
+    {←}{$\leftarrow$}{1}
+    {=>}{$\implies$}{1}
+}
+
+% -----------------------------------------------------------------------
+\title{12-Tone Equal Temperament: a Lean~4 Proof}
+\author{Keith Braithwaite}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a Lean~4 formalisation of the theorem that 12-tone equal
+temperament (\textsc{12tet}) is the unique tuning system satisfying a
+small set of musically-motivated axioms.  Intervals are modelled as
+elements of $\mathbb{Z}/m\mathbb{Z}$.  The main theorem states $m = 12$;
+a subsidiary theorem shows the major/minor interval class has exactly 8
+members.
+\end{abstract}
+
+\tableofcontents
+
+% -----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+% -----------------------------------------------------------------------
+
+In 12-tone equal temperament (\textsc{12tet}) the octave is divided into
+12 equal semitones.  This paper asks: is there a small, musically
+well-motivated set of axioms that \emph{forces} $m = 12$?  We answer yes,
+by formalising the proof in Lean~4 with the Mathlib library.
+
+\subsection*{Model}
+
+Harmonic intervals are modelled as elements of $\mathbb{Z}/m\mathbb{Z}$
+for an unknown $m$.  The four interval classes are:
+
+\begin{description}
+  \item[Unison] the identity element, $0$.
+  \item[Tritone] the unique non-zero self-inverse element $t$ ($t + t = 0$).
+  \item[Perfect] a primitive class constrained by axioms; exactly the
+    pair $\{p, p^{-1}\}$.
+  \item[Major/Minor] the least fixed point of a $\pm 1$ step operator
+    starting from $\{p, p^{-1}\}$, stopping at $\{0, t\}$.
+\end{description}
+
+Inversion is additive negation: $i^{-1} = -i$.  This gives $i + i^{-1}
+= 0$ by the ring axioms, corresponding to the musical fact that an
+interval and its inverse span an octave.
+
+\subsection*{The predicate \texorpdfstring{\textsf{isPerfect}}{isPerfect}}
+
+The predicate \textsf{isPerfect} is declared \texttt{opaque} in Lean: it
+has no explicit definition and can only be manipulated via the axioms.
+This is essential.  Defining it as $i \neq 0 \wedge \neg\,\textsf{isSelfInverse}\,i$
+would make every major/minor interval ``perfect'', collapsing the four
+classes to two.
+
+\lstinputlisting[
+  firstline=49, lastline=49, firstnumber=49,
+  caption={\texttt{Basic.lean}: the opaque perfect-interval predicate},
+  label={lst:basic-perfect}
+]{../Music/Basic.lean}
+
+% -----------------------------------------------------------------------
+\section{Axioms}
+\label{sec:axioms}
+% -----------------------------------------------------------------------
+
+We use eight axioms.  All are stated as Lean \texttt{axiom} declarations,
+which are trusted without proof.
+
+\subsection{A1 and A2: the tritone}
+
+A non-zero self-inverse interval exists and is unique.  A1 forces $m$ to
+be even; A2 rules out $m = 8$ (where both 2 and 6 are self-inverse).
+
+\lstinputlisting[
+  linerange={8-10,12-15}, firstnumber=8,
+  caption={\texttt{Axioms.lean}: A1 and A2},
+  label={lst:ax-tritone}
+]{../Music/Axioms.lean}
+
+\subsection{A3: a perfect interval exists}
+
+\lstinputlisting[
+  firstline=18, lastline=18, firstnumber=18,
+  caption={\texttt{Axioms.lean}: A3},
+  label={lst:ax-perfect-exists}
+]{../Music/Axioms.lean}
+
+\subsection{A4: perfect intervals are not self-inverse}
+
+\texttt{perfect\_nonzero} is derived immediately from A4: since unison is
+self-inverse, a perfect interval cannot be unison.
+
+\lstinputlisting[
+  linerange={21-23,25-27}, firstnumber=21,
+  caption={\texttt{Axioms.lean}: A4 and derived \texttt{perfect\_nonzero}},
+  label={lst:ax-a4}
+]{../Music/Axioms.lean}
+
+\subsection{A5: the perfect class is exactly \texorpdfstring{$\{p, p^{-1}\}$}{the pair}}
+
+\texttt{perfect\_unique} and \texttt{perfect\_inv\_closed} are derived
+directly from A5 by taking the two directions of the biconditional.
+
+\lstinputlisting[
+  firstline=30, lastline=40, firstnumber=30,
+  caption={\texttt{Axioms.lean}: A5 and derived consequences},
+  label={lst:ax-a5}
+]{../Music/Axioms.lean}
+
+\subsection{A6: minimality of the perfect interval above the tritone}
+
+Rather than asserting $p = t + 1$ directly (which would introduce an
+unexplained literal), A6 states that $p$ is the \emph{least}
+non-self-inverse element of $\mathbb{Z}/m\mathbb{Z}$ whose value exceeds
+that of $t$.  The equation $p = t + 1$ is then \emph{derived} in
+Section~\ref{sec:derived}.
+
+\lstinputlisting[
+  firstline=43, lastline=47, firstnumber=43,
+  caption={\texttt{Axioms.lean}: A6},
+  label={lst:ax-a6}
+]{../Music/Axioms.lean}
+
+\subsection{A7: five semitones above the perfect interval reaches unison}
+
+This is the acoustic constraint.  It encodes the approximation
+$\log_2(3/2) \approx 7/12$: the perfect fifth is 7 semitones, so its
+inverse (the perfect fourth) is 5 semitones, and $7 + 5 = 12 = 0$ in
+$\mathbb{Z}/12\mathbb{Z}$.
+
+\lstinputlisting[
+  firstline=50, lastline=51, firstnumber=50,
+  caption={\texttt{Axioms.lean}: A7},
+  label={lst:ax-a7}
+]{../Music/Axioms.lean}
+
+\subsection{A8: a major/minor interval exists}
+
+This rules out $m = 4$.  In $\mathbb{Z}/4\mathbb{Z}$, the four elements
+are fully accounted for by unison, tritone, and the perfect pair; there
+is no room for a fourth class.
+
+\lstinputlisting[
+  firstline=54, lastline=56, firstnumber=54,
+  caption={\texttt{Axioms.lean}: A8},
+  label={lst:ax-a8}
+]{../Music/Axioms.lean}
+
+% -----------------------------------------------------------------------
+\section{Derived Facts}
+\label{sec:derived}
+% -----------------------------------------------------------------------
+
+\subsection*{Shared consequences}
+
+\texttt{tritone\_eq} uses A2 (tritone uniqueness) to pin the tritone to a
+concrete value in any specific modulus, by supplying a witness and
+checking it satisfies the two defining properties.  This eliminates
+repeated boilerplate in later proofs.
+
+\lstinputlisting[
+  firstline=8, lastline=27, firstnumber=8,
+  caption={\texttt{Consequences.lean}: shared derived lemmas},
+  label={lst:consequences}
+]{../Music/Consequences.lean}
+
+\subsection*{$m$ is even}
+
+The tritone has additive order 2 (A1); the order of any element divides
+the group order $|\mathbb{Z}/m\mathbb{Z}| = m$; hence $2 \mid m$.
+
+\lstinputlisting[
+  firstline=57, lastline=68, firstnumber=57,
+  caption={\texttt{TwelveTET.lean}: $m$ is even},
+  label={lst:even}
+]{../Music/TwelveTET.lean}
+
+\subsection*{$m \neq 2$}
+
+Every element of $\mathbb{Z}/2\mathbb{Z}$ is self-inverse, contradicting A4.
+
+\lstinputlisting[
+  firstline=71, lastline=75, firstnumber=71,
+  caption={\texttt{TwelveTET.lean}: $m \neq 2$},
+  label={lst:ne-two}
+]{../Music/TwelveTET.lean}
+
+\subsection*{$p = t + 1$, derived from A6}
+
+Since $m$ is even and $m \neq 2$ we have $m \geq 4$, so $2 \neq 0$ in
+$\mathbb{Z}/m\mathbb{Z}$.  Therefore $t+1$ is not self-inverse (its
+double is $2 \neq 0$).  By A6, $\mathrm{val}(p) \leq \mathrm{val}(t+1)
+= \mathrm{val}(t) + 1$.  Combined with $\mathrm{val}(t) < \mathrm{val}(p)$
+from A6, this forces $p = t + 1$.
+
+\lstinputlisting[
+  firstline=78, lastline=113, firstnumber=78,
+  caption={\texttt{TwelveTET.lean}: $p = t + 1$ derived from minimality},
+  label={lst:above}
+]{../Music/TwelveTET.lean}
+
+\subsection*{$m \mid 12$}
+
+From $p = t+1$ and A7: $t + 6 = (t+1)+5 = p + 5 = 0$.  Then
+$12 = 2(t+6)-(t+t) = 0$ in $\mathbb{Z}/m\mathbb{Z}$, so $m \mid 12$.
+
+\lstinputlisting[
+  linerange={116-122,124-129,131-134}, firstnumber=116,
+  caption={\texttt{TwelveTET.lean}: $m \mid 12$},
+  label={lst:dvd12}
+]{../Music/TwelveTET.lean}
+
+\subsection*{$m \neq 6$ and $m \neq 4$}
+
+In $\mathbb{Z}/6\mathbb{Z}$: $t = 3$, $p = 4$, $p + 5 = 9 \neq 0$,
+contradicting A7.  In $\mathbb{Z}/4\mathbb{Z}$: $t = 2$, $p = 3$,
+$p^{-1} = 1$; every element is in $\{0, t, p, p^{-1}\}$, contradicting A8.
+
+\lstinputlisting[
+  linerange={137-144,146-158}, firstnumber=137,
+  caption={\texttt{TwelveTET.lean}: eliminating $m = 6$ and $m = 4$},
+  label={lst:ne-four-six}
+]{../Music/TwelveTET.lean}
+
+\subsection*{The 12TET theorem: $m = 12$}
+
+Since $m \mid 12$, $m$ is even, and $m \notin \{2, 4, 6\}$, the only
+remaining possibilities are $m \in \{12\}$ (with $m = 1$ excluded by
+\texttt{NeZero}).  The \texttt{interval\_cases} tactic dispatches the
+finite case split.
+
+\lstinputlisting[
+  firstline=161, lastline=171, firstnumber=161,
+  caption={\texttt{TwelveTET.lean}: $m = 12$},
+  label={lst:twelve-tet}
+]{../Music/TwelveTET.lean}
+
+\subsection*{Major/minor intervals as a least fixed point}
+
+The major/minor class is defined as the least fixed point of the step
+operator
+\[
+  \mathrm{stepMM}(p,t,s)
+    = \bigl(s
+        \cup \{j+1 \mid j \in s \cup \{p,p^{-1}\}\}
+        \cup \{j-1 \mid j \in s \cup \{p,p^{-1}\}\}
+      \bigr) \setminus \{0,t\}.
+\]
+The lfp is the intersection of all prefixed points (sets $s$ with
+$\mathrm{stepMM}(p,t,s) \subseteq s$).
+
+\lstinputlisting[
+  linerange={30-32,34-39,41-57,60-72,74-76}, firstnumber=30,
+  caption={\texttt{MajorMinor.lean}: definitions of \textsf{selfInverseSet}, \textsf{stepMM}, \textsf{nonSIReachable}, \textsf{majorMinorIntervals}},
+  label={lst:mm-defs}
+]{../Music/MajorMinor.lean}
+
+The lfp equals the complement of the self-inverse set.  The upper bound
+is immediate from monotonicity; the lower bound is proved by a 10-step
+walk in $\mathbb{Z}/12\mathbb{Z}$ starting from $p = 7$ and $p^{-1} = 5$.
+
+\lstinputlisting[
+  linerange={81-92,94-97}, firstnumber=81,
+  caption={\texttt{MajorMinor.lean}: upper bound},
+  label={lst:mm-upper}
+]{../Music/MajorMinor.lean}
+
+\lstinputlisting[
+  linerange={123-190,192-201,203-210}, firstnumber=123,
+  caption={\texttt{MajorMinor.lean}: lower bound (10-step walk) and equality},
+  label={lst:mm-lower}
+]{../Music/MajorMinor.lean}
+
+\subsection*{Cardinality}
+
+\begin{theorem}
+The major/minor class has $m - 4$ elements; in \textsc{12tet}, exactly~8.
+\end{theorem}
+
+\lstinputlisting[
+  linerange={15-39,41-52,54-57}, firstnumber=15,
+  caption={\texttt{Cardinality.lean}},
+  label={lst:card}
+]{../Music/Cardinality.lean}
+
+% -----------------------------------------------------------------------
+\section{The Partition Theorem}
+\label{sec:partition}
+% -----------------------------------------------------------------------
+
+\begin{theorem}
+The four classes --- $\{0\}$, $\{t\}$, $\{p, p^{-1}\}$, and the
+major/minor class --- partition $\mathbb{Z}/m\mathbb{Z}$.
+\end{theorem}
+
+\lstinputlisting[
+  firstline=11, lastline=29, firstnumber=11,
+  caption={\texttt{Partition.lean}},
+  label={lst:partition}
+]{../Music/Partition.lean}
+
+% -----------------------------------------------------------------------
+\section{Risks to Validity}
+\label{sec:risks}
+% -----------------------------------------------------------------------
+
+\subsection*{Axiom consistency}
+
+The axiom set A1--A8 is not proved consistent within Lean; the axioms are
+trusted declarations.  Consistency is supported informally by the fact
+that $\mathbb{Z}/12\mathbb{Z}$ with $t = 6$ and $p = 7$ satisfies all
+eight axioms, but this has not been formalised as a model-construction proof.
+
+\subsection*{The numeral 5 in A7}
+
+Axiom A7 ($p + 5 = 0$) introduces the literal 5.  This is the irreducible
+acoustic content of the proof: the perfect fifth is approximated by 7/12
+of an octave, a fact about physics that cannot be derived from qualitative
+musical structure alone.  Any reformulation of A7 that avoids the numeral
+5 must implicitly encode the same information.
+
+\subsection*{The minimality axiom A6}
+
+The minimality formulation of A6 avoids the literal 1 of the original
+$p = t + 1$, but the derived lemma \texttt{perfect\_above\_tritone}
+still concludes $p = t + 1$.  The improvement is that the \emph{axiom}
+is now qualitative; the numeral emerges from the proof rather than being
+assumed.
+
+\subsection*{The opaque predicate \textsf{isPerfect}}
+
+Declaring \textsf{isPerfect} opaque is load-bearing: it prevents Lean from
+unfolding a hypothetical explicit definition during proof search, which
+could produce spurious proofs.  The trade-off is that \textsf{isPerfect}
+cannot be computationally evaluated.
+
+% -----------------------------------------------------------------------
+\section{Further Work}
+\label{sec:further}
+% -----------------------------------------------------------------------
+
+\begin{itemize}
+  \item \textbf{Formalise a model.}  Construct $\mathbb{Z}/12\mathbb{Z}$
+    explicitly with $t = 6$, $p = 7$, and verify all eight axioms, giving
+    a consistency proof.
+
+  \item \textbf{Eliminate A7.}  Replace $p + 5 = 0$ with an axiom
+    expressing acoustic nearness (best rational approximation of
+    $\log_2(3/2)$) and derive $p + 5 = 0$ as a theorem.  This requires
+    bringing in real analysis or continued-fraction arithmetic.
+
+  \item \textbf{Diatonic structure.}  Characterise the major scale as a
+    specific 7-element subset of the major/minor class and derive its
+    interval structure (tone--semitone pattern) from the axioms.
+
+  \item \textbf{Voice-leading.}  Formalise the claim that the major/minor
+    class is closed under minimal voice-leading displacement ($\pm 1$ step),
+    connecting the lfp construction to the musical concept.
+\end{itemize}
+
+\end{document}
