@@ -7,6 +7,8 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 % -----------------------------------------------------------------------
 % Macros for subject-matter identifiers (used in literate entries)
@@ -165,6 +167,181 @@ classes to two.
   caption={\texttt{Basic.lean}: the opaque perfect-interval predicate},
   label={lst:basic-perfect}
 ]{../Music/Basic.lean}
+
+\subsection*{Module architecture}
+
+Figure~\ref{fig:architecture} shows the eight \texttt{.lean} files and
+their import dependencies.  Each rectangle lists the private declarations
+inside; public declarations flow along the labelled arrows to the modules
+that import them.
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  >=Stealth,
+  mod/.style={draw, rectangle, rounded corners=2pt, text width=3.8cm,
+              inner sep=4pt, align=left},
+  modW/.style={draw, rectangle, rounded corners=2pt, text width=4.8cm,
+               inner sep=4pt, align=left},
+  imp/.style={->, thin, shorten >=2pt, shorten <=2pt},
+  lbl/.style={font=\tiny, fill=white, inner sep=1pt, align=left}
+]
+
+%% ---- nodes ----
+\node[mod] (basic) at (2, 0) {
+  {\small\bfseries Basic}\\[2pt]
+  \footnotesize\itshape no private items
+};
+\node[mod] (model) at (9, 0) {
+  {\small\bfseries Model}\\[2pt]
+  \footnotesize\itshape no private items
+};
+\node[mod] (axioms) at (2, -3) {
+  {\small\bfseries Axioms}\\[2pt]
+  \footnotesize\itshape no private items
+};
+\node[mod] (conseq) at (2, -6) {
+  {\small\bfseries Consequences}\\[2pt]
+  \footnotesize\itshape no private items
+};
+\node[modW] (twelve) at (2, -9.8) {
+  {\small\bfseries TwelveTET}\\[2pt]
+  \tiny\itshape
+  m\_even, m\_ne\_two,\\
+  tritone\_plus\_six,\\
+  twelve\_eq\_zero,\\
+  m\_dvd\_twelve,\\
+  m\_ne\_six, m\_ne\_four
+};
+\node[modW] (mm) at (9, -9.8) {
+  {\small\bfseries MajorMinor}\\[2pt]
+  \tiny\itshape
+  stepMM\_monotone,\\
+  nonSIReachable\_least,\\
+  complement\_SI\_is\_fixedPoint,\\
+  nonSIReachable\_subset\_complement,\\
+  prefixed\_contains\_complement,\\
+  complement\_subset\_nonSIReachable
+};
+\node[modW] (card) at (5, -14.5) {
+  {\small\bfseries Cardinality}\\[2pt]
+  \tiny\itshape
+  nonSIReachable\_card,\\
+  perfect\_pair\_subset\_nonSIReachable
+};
+\node[mod] (part) at (10, -14.5) {
+  {\small\bfseries Partition}\\[2pt]
+  \footnotesize\itshape no private items
+};
+
+%% ---- main left-column chain ----
+
+\draw[imp] (basic) -- (axioms)
+  node[lbl, midway, right=4pt] {
+    \texttt{HarmonicInterval}, \texttt{IsTritone},\\
+    \texttt{isPerfect}, \texttt{isSelfInverse}
+  };
+
+\draw[imp] (axioms) -- (conseq)
+  node[lbl, midway, right=4pt] {
+    \texttt{tritone\_unique}, \texttt{perfect\_not\_SI}
+  };
+
+\draw[imp] (conseq) -- (twelve)
+  node[lbl, midway, right=4pt] {\texttt{tritone\_eq}};
+
+%% ---- skip arcs in left column, routed through east channel ----
+%% Each arc bows right of the main chain boxes and re-enters from the east.
+
+\draw[imp] (basic) .. controls (5.0, 0) and (5.0, -6) .. (conseq)
+  node[lbl, pos=0.5, right=2pt] {
+    \texttt{IsTritone}, \texttt{isSelfInverse}, \texttt{isPerfect}
+  };
+
+\draw[imp] (basic) .. controls (5.6, 0) and (5.6, -9.8) .. (twelve)
+  node[lbl, pos=0.62, right=2pt] {
+    \texttt{HarmonicInterval}, \texttt{isSelfInverse}
+  };
+
+\draw[imp] (axioms) .. controls (6.2, -3) and (6.2, -9.8) .. (twelve)
+  node[lbl, pos=0.55, right=2pt] {
+    \texttt{perfect\_iff},\\
+    \texttt{perfect\_least\_above\_tritone},\\
+    \texttt{five\_above\_perfect},\\
+    \texttt{major\_minor\_exists}
+  };
+
+%% ---- Basic → Model (horizontal) ----
+
+\draw[imp] (basic) -- (model)
+  node[lbl, midway, above=2pt] {
+    \texttt{HarmonicInterval}, \texttt{IsTritone}, \texttt{isSelfInverse}
+  };
+
+%% ---- cross-column arcs from left column ----
+
+\draw[imp] (basic) to[out=-40, in=135] (mm)
+  node[lbl, pos=0.38, above=2pt] {
+    \texttt{HarmonicInterval}, \texttt{isSelfInverse}
+  };
+
+\draw[imp] (basic) to[out=-65, in=115] (card)
+  node[lbl, pos=0.42, right=2pt] {
+    \texttt{HarmonicInterval}, \texttt{isPerfect}
+  };
+
+\draw[imp] (basic) to[out=-25, in=130] (part)
+  node[lbl, pos=0.3, above=2pt] {\texttt{HarmonicInterval}};
+
+\draw[imp] (axioms) to[out=-30, in=150] (mm)
+  node[lbl, pos=0.5, above=2pt] {
+    \texttt{perfect\_iff}, \texttt{perfect\_not\_SI}
+  };
+
+\draw[imp] (axioms) to[out=-55, in=120] (card)
+  node[lbl, pos=0.48, left=2pt] {
+    \texttt{perfect\_not\_SI},\\
+    \texttt{perfect\_inv\_closed}
+  };
+
+\draw[imp] (axioms) to[out=-30, in=140] (part)
+  node[lbl, pos=0.32, below=2pt] {\texttt{perfect\_iff}};
+
+\draw[imp] (conseq) to[out=-50, in=130] (card)
+  node[lbl, pos=0.5, right=2pt] {\texttt{perfect\_pair\_card}};
+
+%% ---- TwelveTET → MajorMinor (horizontal) and → Cardinality ----
+
+\draw[imp] (twelve) -- (mm)
+  node[lbl, midway, above=2pt] {
+    \texttt{twelve\_TET}, \texttt{perfect\_above\_tritone}
+  };
+
+\draw[imp] (twelve) to[out=-55, in=145] (card)
+  node[lbl, pos=0.55, left=2pt] {\texttt{twelve\_TET}};
+
+%% ---- MajorMinor → Cardinality and Partition ----
+
+\draw[imp] (mm) to[out=-130, in=45] (card)
+  node[lbl, pos=0.5, below=3pt] {
+    \texttt{selfInverseSet}, \texttt{nonSIReachable},\\
+    \texttt{majorMinorIntervals},\\
+    \texttt{nonSIReachable\_eq\_complement}
+  };
+
+\draw[imp] (mm) -- (part)
+  node[lbl, midway, right=2pt] {
+    \texttt{selfInverseSet},\\
+    \texttt{majorMinorIntervals},\\
+    \texttt{nonSIReachable\_eq\_complement}
+  };
+
+\end{tikzpicture}
+\caption{Lean module architecture. Private declarations are listed in
+  italics inside each rectangle. Each arrow is labelled with the public
+  names from the source module that are used in the destination.}
+\label{fig:architecture}
+\end{figure}
 
 % -----------------------------------------------------------------------
 \section{Axioms}
