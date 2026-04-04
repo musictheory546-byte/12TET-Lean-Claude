@@ -234,7 +234,7 @@ that import them.
   \footnotesize\itshape no private items
 };
 
-%% ---- main left-column chain ----
+%% ---- left-column chain ----
 
 \draw[imp] (basic) -- (axioms)
   node[lbl, midway, right=4pt] {
@@ -250,27 +250,6 @@ that import them.
 \draw[imp] (conseq) -- (twelve)
   node[lbl, midway, right=4pt] {\texttt{tritone\_eq}};
 
-%% ---- skip arcs in left column, routed through east channel ----
-%% Each arc bows right of the main chain boxes and re-enters from the east.
-
-\draw[imp] (basic) .. controls (5.0, 0) and (5.0, -6) .. (conseq)
-  node[lbl, pos=0.5, right=2pt] {
-    \texttt{IsTritone}, \texttt{isSelfInverse}, \texttt{isPerfect}
-  };
-
-\draw[imp] (basic) .. controls (5.6, 0) and (5.6, -9.8) .. (twelve)
-  node[lbl, pos=0.62, right=2pt] {
-    \texttt{HarmonicInterval}, \texttt{isSelfInverse}
-  };
-
-\draw[imp] (axioms) .. controls (6.2, -3) and (6.2, -9.8) .. (twelve)
-  node[lbl, pos=0.55, right=2pt] {
-    \texttt{perfect\_iff},\\
-    \texttt{perfect\_least\_above\_tritone},\\
-    \texttt{five\_above\_perfect},\\
-    \texttt{major\_minor\_exists}
-  };
-
 %% ---- Basic → Model (horizontal) ----
 
 \draw[imp] (basic) -- (model)
@@ -278,47 +257,12 @@ that import them.
     \texttt{HarmonicInterval}, \texttt{IsTritone}, \texttt{isSelfInverse}
   };
 
-%% ---- cross-column arcs from left column ----
-
-\draw[imp] (basic) to[out=-40, in=135] (mm)
-  node[lbl, pos=0.38, above=2pt] {
-    \texttt{HarmonicInterval}, \texttt{isSelfInverse}
-  };
-
-\draw[imp] (basic) to[out=-65, in=115] (card)
-  node[lbl, pos=0.42, right=2pt] {
-    \texttt{HarmonicInterval}, \texttt{isPerfect}
-  };
-
-\draw[imp] (basic) to[out=-25, in=130] (part)
-  node[lbl, pos=0.3, above=2pt] {\texttt{HarmonicInterval}};
-
-\draw[imp] (axioms) to[out=-30, in=150] (mm)
-  node[lbl, pos=0.5, above=2pt] {
-    \texttt{perfect\_iff}, \texttt{perfect\_not\_SI}
-  };
-
-\draw[imp] (axioms) to[out=-55, in=120] (card)
-  node[lbl, pos=0.48, left=2pt] {
-    \texttt{perfect\_not\_SI},\\
-    \texttt{perfect\_inv\_closed}
-  };
-
-\draw[imp] (axioms) to[out=-30, in=140] (part)
-  node[lbl, pos=0.32, below=2pt] {\texttt{perfect\_iff}};
-
-\draw[imp] (conseq) to[out=-50, in=130] (card)
-  node[lbl, pos=0.5, right=2pt] {\texttt{perfect\_pair\_card}};
-
-%% ---- TwelveTET → MajorMinor (horizontal) and → Cardinality ----
+%% ---- TwelveTET → MajorMinor (horizontal) ----
 
 \draw[imp] (twelve) -- (mm)
   node[lbl, midway, above=2pt] {
     \texttt{twelve\_TET}, \texttt{perfect\_above\_tritone}
   };
-
-\draw[imp] (twelve) to[out=-55, in=145] (card)
-  node[lbl, pos=0.55, left=2pt] {\texttt{twelve\_TET}};
 
 %% ---- MajorMinor → Cardinality and Partition ----
 
@@ -455,7 +399,7 @@ The tritone has additive order 2 (A1); the order of any element divides
 the group order $|\mathbb{Z}/m\mathbb{Z}| = m$; hence $2 \mid m$.
 
 \lstinputlisting[
-  firstline=57, lastline=68, firstnumber=57,
+  firstline=55, lastline=66, firstnumber=55,
   caption={\texttt{TwelveTET.lean}: $m$ is even},
   label={lst:even}
 ]{../Music/TwelveTET.lean}
@@ -465,7 +409,7 @@ the group order $|\mathbb{Z}/m\mathbb{Z}| = m$; hence $2 \mid m$.
 Every element of $\mathbb{Z}/2\mathbb{Z}$ is self-inverse, contradicting A4.
 
 \lstinputlisting[
-  firstline=71, lastline=75, firstnumber=71,
+  firstline=69, lastline=73, firstnumber=69,
   caption={\texttt{TwelveTET.lean}: $m \neq 2$},
   label={lst:ne-two}
 ]{../Music/TwelveTET.lean}
@@ -479,7 +423,7 @@ double is $2 \neq 0$).  By A6, $\mathrm{val}(p) \leq \mathrm{val}(t+1)
 from A6, this forces $p = t + 1$.
 
 \lstinputlisting[
-  firstline=78, lastline=113, firstnumber=78,
+  firstline=76, lastline=111, firstnumber=76,
   caption={\texttt{TwelveTET.lean}: $p = t + 1$ derived from minimality},
   label={lst:above}
 ]{../Music/TwelveTET.lean}
@@ -490,7 +434,7 @@ From $p = t+1$ and A7: $t + 6 = (t+1)+5 = p + 5 = 0$.  Then
 $12 = 2(t+6)-(t+t) = 0$ in $\mathbb{Z}/m\mathbb{Z}$, so $m \mid 12$.
 
 \lstinputlisting[
-  linerange={116-122,124-129,131-134}, firstnumber=116,
+  linerange={114-120,122-127,129-132}, firstnumber=114,
   caption={\texttt{TwelveTET.lean}: $m \mid 12$},
   label={lst:dvd12}
 ]{../Music/TwelveTET.lean}
@@ -502,7 +446,7 @@ contradicting A7.  In $\mathbb{Z}/4\mathbb{Z}$: $t = 2$, $p = 3$,
 $p^{-1} = 1$; every element is in $\{0, t, p, p^{-1}\}$, contradicting A8.
 
 \lstinputlisting[
-  linerange={137-144,146-158}, firstnumber=137,
+  linerange={135-142,144-156}, firstnumber=135,
   caption={\texttt{TwelveTET.lean}: eliminating $m = 6$ and $m = 4$},
   label={lst:ne-four-six}
 ]{../Music/TwelveTET.lean}
@@ -515,7 +459,7 @@ remaining possibilities are $m \in \{12\}$ (with $m = 1$ excluded by
 finite case split.
 
 \lstinputlisting[
-  firstline=161, lastline=171, firstnumber=161,
+  firstline=159, lastline=169, firstnumber=159,
   caption={\texttt{TwelveTET.lean}: $m = 12$},
   label={lst:twelve-tet}
 ]{../Music/TwelveTET.lean}
@@ -535,7 +479,7 @@ The lfp is the intersection of all prefixed points (sets $s$ with
 $\mathrm{stepMM}(p,t,s) \subseteq s$).
 
 \lstinputlisting[
-  linerange={30-32,34-39,41-57,60-72,74-76}, firstnumber=30,
+  linerange={28-30,32-37,39-55,58-70,72-74}, firstnumber=28,
   caption={\texttt{MajorMinor.lean}: definitions of \textsf{selfInverseSet}, \textsf{stepMM}, \textsf{nonSIReachable}, \textsf{majorMinorIntervals}},
   label={lst:mm-defs}
 ]{../Music/MajorMinor.lean}
@@ -545,13 +489,13 @@ is immediate from monotonicity; the lower bound is proved by a 10-step
 walk in $\mathbb{Z}/12\mathbb{Z}$ starting from $p = 7$ and $p^{-1} = 5$.
 
 \lstinputlisting[
-  linerange={81-92,94-97}, firstnumber=81,
+  linerange={79-90,92-95}, firstnumber=79,
   caption={\texttt{MajorMinor.lean}: upper bound},
   label={lst:mm-upper}
 ]{../Music/MajorMinor.lean}
 
 \lstinputlisting[
-  linerange={123-190,193-201,204-210}, firstnumber=123,
+  linerange={121-188,191-199,202-208}, firstnumber=121,
   caption={\texttt{MajorMinor.lean}: lower bound (10-step walk) and equality},
   label={lst:mm-lower}
 ]{../Music/MajorMinor.lean}
@@ -563,7 +507,7 @@ The major/minor class has $m - 4$ elements; in \textsc{12tet}, exactly~8.
 \end{theorem}
 
 \lstinputlisting[
-  linerange={15-39,41-52,54-57}, firstnumber=15,
+  linerange={11-35,37-48,50-53}, firstnumber=11,
   caption={\texttt{Cardinality.lean}},
   label={lst:card}
 ]{../Music/Cardinality.lean}
@@ -579,7 +523,7 @@ major/minor class --- partition $\mathbb{Z}/m\mathbb{Z}$.
 \end{theorem}
 
 \lstinputlisting[
-  firstline=11, lastline=29, firstnumber=11,
+  firstline=9, lastline=27, firstnumber=9,
   caption={\texttt{Partition.lean}},
   label={lst:partition}
 ]{../Music/Partition.lean}

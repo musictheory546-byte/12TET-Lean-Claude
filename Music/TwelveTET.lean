@@ -9,8 +9,6 @@ import Mathlib.Tactic.IntervalCases       -- interval_cases
 import Mathlib.Tactic.NormNum            -- norm_num
 import Mathlib.Tactic.LinearCombination  -- linear_combination
 import Mathlib.Tactic.Ring               -- ring
-import Music.Basic
-import Music.Axioms
 import Music.Consequences
 
 /-!

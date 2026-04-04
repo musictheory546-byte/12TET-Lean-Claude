@@ -2,10 +2,6 @@ import Mathlib.Data.Finset.Card          -- Finset.card_pair, Finset.card_sdiff
 import Mathlib.Data.Finset.Lattice.Basic -- Finset.inter_eq_left
 import Mathlib.Data.Fintype.Card         -- Finset.card_univ
 import Mathlib.Data.ZMod.Basic           -- ZMod.card
-import Music.Basic
-import Music.Axioms
-import Music.Consequences
-import Music.TwelveTET
 import Music.MajorMinor
 
 variable {m : ℕ}
