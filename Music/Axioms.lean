@@ -4,9 +4,9 @@ variable {m : ℕ}
 
 /-! ## Axioms -/
 
-/-- **A1**: A non-zero self-inverse interval (the tritone) exists. Forces m even. -/
-axiom tritone_exists [NeZero m] :
-    ∃ t : HarmonicInterval m, IsTritone t
+-- /-- **A1**: A non-zero self-inverse interval (the tritone) exists. Forces m even. -/
+-- axiom tritone_exists [NeZero m] :
+--     ∃ t : HarmonicInterval m, IsTritone t
 
 /-- **A2**: The tritone is unique. Rules out m = 8 (where 2 and 6 are both self-inverse). -/
 axiom tritone_unique [NeZero m]

@@ -31,7 +31,7 @@ We classify them into four classes:
 
 ## Axioms
 
-  A1.  tritone_exists        : ∃ t ≠ 0, t + t = 0       (forces m even)
+  A1.  tritone_exists        : ∃ t ≠ 0, t + t = 0       (forces m even)  [commented out]
   A2.  tritone_unique        : unique such t
   A3.  perfect_exists        : ∃ p, isPerfect p
   A4.  perfect_not_SI        : isPerfect p → ¬isSelfInverse p
@@ -44,7 +44,8 @@ We classify them into four classes:
   A7.  five_above_perfect    : isPerfect p → p + 5 = 0
   A8.  major_minor_exists    : ∃ non-unison non-SI non-perfect interval
 
-From A1–A8 we prove m = 12, then prove the major/minor lfp has exactly 8 elements.
+From A1–A8 we prove m = 12 (A1 currently commented out; the remaining theorems are
+stated in terms of an explicit tritone witness t).
 -/
 
 variable {m : ℕ}
