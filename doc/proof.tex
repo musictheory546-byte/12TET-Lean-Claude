@@ -551,7 +551,7 @@ walk in $\mathbb{Z}/12\mathbb{Z}$ starting from $p = 7$ and $p^{-1} = 5$.
 ]{../Music/MajorMinor.lean}
 
 \lstinputlisting[
-  linerange={123-190,192-201,203-210}, firstnumber=123,
+  linerange={123-190,193-201,204-210}, firstnumber=123,
   caption={\texttt{MajorMinor.lean}: lower bound (10-step walk) and equality},
   label={lst:mm-lower}
 ]{../Music/MajorMinor.lean}
@@ -654,5 +654,136 @@ cannot be computationally evaluated.
     class is closed under minimal voice-leading displacement ($\pm 1$ step),
     connecting the lfp construction to the musical concept.
 \end{itemize}
+
+% -----------------------------------------------------------------------
+\appendix
+\section{Lean~4 Proof Tactics}
+\label{app:tactics}
+% -----------------------------------------------------------------------
+
+The following tactics appear in the proof.  Each entry gives the tactic
+name as it appears in the source, followed by a brief plain-English
+description of what it does.
+
+\begin{description}
+  \item[\texttt{apply}]
+    Unify the current goal with the conclusion of a given lemma or
+    hypothesis, leaving the lemma's hypotheses as new sub-goals.
+
+  \item[\texttt{by\_cases}]
+    Split the proof into two branches by introducing a hypothesis \(h : P\)
+    in one branch and \(h : \neg P\) in the other.
+
+  \item[\texttt{by\_contra}]
+    Replace the current goal \(P\) with the assumption \(\neg P\) and
+    derive a contradiction.
+
+  \item[\texttt{calc}]
+    Chain a sequence of equalities or inequalities, where each step is
+    justified by a tactic or term.
+
+  \item[\texttt{constructor}]
+    Split a conjunction or existential goal into its components, producing
+    one sub-goal per component.
+
+  \item[\texttt{decide}]
+    Discharge a decidable proposition by computation (kernel-level
+    evaluation).
+
+  \item[\texttt{exact}]
+    Close the current goal by providing a term whose type matches it
+    exactly.
+
+  \item[\texttt{ext}]
+    Reduce an equality of functions, sets, or finsets to pointwise
+    equality, introducing a universally quantified variable.
+
+  \item[\texttt{fin\_cases}]
+    Enumerate all cases for a variable ranging over a finite type, reducing
+    the goal to one instance per element.
+
+  \item[\texttt{have}]
+    Introduce a local hypothesis by stating its type and providing a proof;
+    the main goal is then proved with the new hypothesis in context.
+
+  \item[\texttt{haveI}]
+    Like \texttt{have}, but inserts the result as a local instance so that
+    typeclass search can use it immediately.
+
+  \item[\texttt{interval\_cases}]
+    When a variable is constrained to a finite range of integers by
+    hypotheses in the context, enumerate each integer in that range as a
+    separate case.
+
+  \item[\texttt{intro}]
+    Move a universally quantified variable or an implication hypothesis
+    from the goal into the local context.
+
+  \item[\texttt{linear\_combination}]
+    Close a goal that is a linear combination of hypotheses by supplying
+    the coefficients; the remainder is discharged by \texttt{ring}.
+
+  \item[\texttt{norm\_num}]
+    Evaluate and close goals involving numerical expressions (arithmetic,
+    divisibility, inequalities on literals).
+
+  \item[\texttt{nth\_rw}]
+    Like \texttt{rw}, but rewrites only the \(n\)-th occurrence of the
+    pattern rather than all occurrences.
+
+  \item[\texttt{obtain}]
+    Destruct a hypothesis of product, existential, or disjunctive type,
+    binding the components to named variables.
+
+  \item[\texttt{omega}]
+    Decide linear arithmetic goals over the integers or natural numbers.
+
+  \item[\texttt{push Not}]
+    Push negations inward through logical connectives and quantifiers,
+    converting e.g.\ $\neg(\forall x, P)$ to $\exists x, \neg P$.
+
+  \item[\texttt{rcases}]
+    Recursively destruct a hypothesis using a pattern, binding sub-terms
+    to named variables in one step.
+
+  \item[\texttt{refine}]
+    Like \texttt{exact}, but allows placeholders (\texttt{?\_}) that
+    become new sub-goals, supporting partial term construction.
+
+  \item[\texttt{rfl}]
+    Close a goal of the form $a = a$ by reflexivity.
+
+  \item[\texttt{ring}]
+    Close a goal that is an identity in a commutative (semi)ring by
+    normalisation.
+
+  \item[\texttt{rintro}]
+    Combine \texttt{intro} and \texttt{rcases}: introduce a hypothesis and
+    immediately destruct it using a pattern.
+
+  \item[\texttt{rw}]
+    Rewrite the goal (or a hypothesis) by substituting equals for equals,
+    using an equation or iff.
+
+  \item[\texttt{rwa}]
+    Like \texttt{rw}, but closes the goal with \texttt{assumption} after
+    the rewrite.
+
+  \item[\texttt{simp}]
+    Simplify the goal (or a hypothesis) by repeatedly applying a
+    configurable set of rewrite lemmas and decision procedures.
+
+  \item[\texttt{simp\_all}]
+    Apply \texttt{simp} to the goal and all hypotheses simultaneously,
+    using each simplified hypothesis to further simplify the others.
+
+  \item[\texttt{subst}]
+    Given a hypothesis $x = e$ (or $e = x$) where $x$ is a local
+    variable, substitute $e$ for $x$ everywhere and remove the variable.
+
+  \item[\texttt{unfold}]
+    Unfold a definition by name in the goal, replacing the defined
+    identifier with its body.
+\end{description}
 
 \end{document}

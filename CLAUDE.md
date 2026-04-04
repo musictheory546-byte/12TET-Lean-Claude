@@ -36,6 +36,9 @@
 ### Find
 * You can run any `find` command that does not make modifications to pre-existing file on directories under `/Users/lean`.
 
+### LaTeX
+* You can run `latexmk -pdf -interaction=nonstopmode proof.tex 2>&1 | tail -40` in directory /Users/lean/Documents/Working/music/doc without confirming with me. Do that after editing `doc/proof.tex`.
+
 ### Git
 * You may perform repo metadata operations, but not commits of changes to files.
 
@@ -50,6 +53,7 @@
 * * The Partition Theorem
 * * Risks to Validity
 * * Further Work
+* * An appendix listing all the Lean proof tactics used with a brief plan-English description of what they do
 
 ### Use of package listings
 Include proof text from .lean files using the listings package.
