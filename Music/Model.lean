@@ -1,4 +1,5 @@
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 import Music.Basic
 
 /-!
@@ -96,3 +97,141 @@ def zmod3Model : HarmonicModel 3 where
   A6   := fun t ht => absurd ht (zmod3_no_tritone t)
   A7   := by decide
   A8   := fun t ht => absurd ht (zmod3_no_tritone t)
+
+/-!
+### Non-existence results for m = 4 and m = 5
+
+Neither `HarmonicModel 4` nor `HarmonicModel 5` can be constructed:
+- m = 5: A7 forces p = 0 (unison), which is self-inverse, contradicting A4.
+- m = 4: A7 forces p = 3; ZMod 4 has a tritone t = 2; A8 then demands a
+  non-unison non-self-inverse non-perfect element, but {1, 3} = {p⁻¹, p}
+  exhausts the non-zero non-self-inverse elements.
+-/
+
+/-- No `HarmonicModel 5` exists: A7 forces p = 0, which is self-inverse, contradicting A4. -/
+theorem no_model_5 : ¬Nonempty (HarmonicModel 5) := by
+  rintro ⟨⟨p, perf, _, A3, A4, _, _, A7, _⟩⟩
+  -- In ZMod 5, char = 5 so 5 = 0; A7 : p + 5 = 0 becomes p = 0
+  have hp0 : p = 0 := by
+    have h5 : (5 : HarmonicInterval 5) = 0 := by decide
+    have := A7; rw [h5, add_zero] at this; exact this
+  exact A4 p A3 (hp0 ▸ unison_is_self_inverse)
+
+/-- No `HarmonicModel 4` exists: A7 forces p = 3; t = 2 is the unique tritone;
+A8 then requires a non-perfect non-SI non-zero element, but none exists. -/
+theorem no_model_4 : ¬Nonempty (HarmonicModel 4) := by
+  rintro ⟨⟨p, perf, _, A3, _, A5, _, A7, A8⟩⟩
+  -- In ZMod 4, 5 = 1; A7 : p + 1 = 0 so p = -1 = 3
+  have hp3 : p = 3 := by
+    have h5 : (5 : HarmonicInterval 4) = 1 := by decide
+    have hA7' : p + 1 = 0 := by rwa [h5] at A7
+    have hm1 : (-1 : HarmonicInterval 4) = 3 := by decide
+    rw [← hm1, ← eq_neg_of_add_eq_zero_left hA7']
+  have ht2 : IsTritone (2 : HarmonicInterval 4) :=
+    ⟨by decide, by simp [isSelfInverse]; decide⟩
+  obtain ⟨i, hine, hiSI, hiP⟩ := A8 2 ht2
+  have hpi1 : p⁻¹ = (1 : HarmonicInterval 4) := by
+    simp only [HI_inv_eq_neg, hp3]; decide
+  fin_cases i
+  · exact hine rfl
+  · exact hiP ((A5 1).mpr (Or.inr hpi1.symm))
+  · exact hiSI (by simp [isSelfInverse]; decide)
+  · exact hiP ((A5 3).mpr (Or.inl hp3.symm))
+
+/-!
+### Models for m = 7, 9, 11 (odd moduli, no tritone)
+
+In each case A7 determines p = -5, and since the modulus is odd there is no
+non-zero self-inverse element, so A2, A6, and A8 hold vacuously.
+-/
+
+private lemma zmod7_no_tritone (s : HarmonicInterval 7) : ¬IsTritone s := by
+  intro ⟨hne, hsi⟩
+  fin_cases s
+  · exact hne rfl
+  all_goals (simp only [isSelfInverse] at hsi; exact absurd hsi (by decide))
+
+private lemma zmod9_no_tritone (s : HarmonicInterval 9) : ¬IsTritone s := by
+  intro ⟨hne, hsi⟩
+  fin_cases s
+  · exact hne rfl
+  all_goals (simp only [isSelfInverse] at hsi; exact absurd hsi (by decide))
+
+private lemma zmod11_no_tritone (s : HarmonicInterval 11) : ¬IsTritone s := by
+  intro ⟨hne, hsi⟩
+  fin_cases s
+  · exact hne rfl
+  all_goals (simp only [isSelfInverse] at hsi; exact absurd hsi (by decide))
+
+/-- Model for m = 7: p = 2, perf = {2, 5}. No tritone; A2/A6/A8 vacuous. -/
+def zmod7Model : HarmonicModel 7 where
+  p    := 2
+  perf := fun i => i = 2 ∨ i = 5
+  A2   := fun s _ hs _ => absurd hs (zmod7_no_tritone s)
+  A3   := Or.inl rfl
+  A4   := by
+    intro q hq
+    rcases hq with rfl | rfl <;> simp only [isSelfInverse] <;> decide
+  A5   := fun _ => Iff.rfl
+  A6   := fun t ht => absurd ht (zmod7_no_tritone t)
+  A7   := by decide
+  A8   := fun t ht => absurd ht (zmod7_no_tritone t)
+
+/-- Model for m = 9: p = 4, perf = {4, 5}. No tritone; A2/A6/A8 vacuous. -/
+def zmod9Model : HarmonicModel 9 where
+  p    := 4
+  perf := fun i => i = 4 ∨ i = 5
+  A2   := fun s _ hs _ => absurd hs (zmod9_no_tritone s)
+  A3   := Or.inl rfl
+  A4   := by
+    intro q hq
+    rcases hq with rfl | rfl <;> simp only [isSelfInverse] <;> decide
+  A5   := fun _ => Iff.rfl
+  A6   := fun t ht => absurd ht (zmod9_no_tritone t)
+  A7   := by decide
+  A8   := fun t ht => absurd ht (zmod9_no_tritone t)
+
+/-- Model for m = 11: p = 6, perf = {6, 5}. No tritone; A2/A6/A8 vacuous. -/
+def zmod11Model : HarmonicModel 11 where
+  p    := 6
+  perf := fun i => i = 6 ∨ i = 5
+  A2   := fun s _ hs _ => absurd hs (zmod11_no_tritone s)
+  A3   := Or.inl rfl
+  A4   := by
+    intro q hq
+    rcases hq with rfl | rfl <;> simp only [isSelfInverse] <;> decide
+  A5   := fun _ => Iff.rfl
+  A6   := fun t ht => absurd ht (zmod11_no_tritone t)
+  A7   := by decide
+  A8   := fun t ht => absurd ht (zmod11_no_tritone t)
+
+/-!
+### Non-existence results for m = 6, 8, 10
+-/
+
+/-- No `HarmonicModel 6` exists: A7 forces p = 1; t = 3 is a tritone;
+A6 then requires val(3) < val(1), i.e. 3 < 1. Contradiction. -/
+theorem no_model_6 : ¬Nonempty (HarmonicModel 6) := by
+  rintro ⟨⟨p, perf, _, _, _, _, A6, A7, _⟩⟩
+  have hp : p = -5 := eq_neg_of_add_eq_zero_left A7
+  subst hp
+  have ht3 : IsTritone (3 : HarmonicInterval 6) :=
+    ⟨by decide, by simp only [isSelfInverse]; decide⟩
+  exact absurd (A6 3 ht3).1 (by decide)
+
+/-- No `HarmonicModel 8` exists: A7 forces p = 3; t = 4 is a tritone;
+A6 then requires val(4) < val(3), i.e. 4 < 3. Contradiction. -/
+theorem no_model_8 : ¬Nonempty (HarmonicModel 8) := by
+  rintro ⟨⟨p, perf, _, _, _, _, A6, A7, _⟩⟩
+  have hp : p = -5 := eq_neg_of_add_eq_zero_left A7
+  subst hp
+  have ht4 : IsTritone (4 : HarmonicInterval 8) :=
+    ⟨by decide, by simp only [isSelfInverse]; decide⟩
+  exact absurd (A6 4 ht4).1 (by decide)
+
+/-- No `HarmonicModel 10` exists: A7 forces p = 5, which is self-inverse, contradicting A4. -/
+theorem no_model_10 : ¬Nonempty (HarmonicModel 10) := by
+  rintro ⟨⟨p, perf, _, A3, A4, _, _, A7, _⟩⟩
+  have hp : p = -5 := eq_neg_of_add_eq_zero_left A7
+  subst hp
+  exact A4 (-5) A3 (by simp only [isSelfInverse]; decide)
